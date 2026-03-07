@@ -1,0 +1,21 @@
+lets do only html css and simpl js for a prototype to show client only
+
+i am building an ordering system that looks like mcdonals kiosk machine in malaysia
+
+user will use vertical monitor to view the ui 
+
+and the ui should be responsive in mobile too
+
+at home page
+there is a promotion poster
+
+in center user can select either "Delivery" or "Own Collect"
+
+selecting one of it will navigate to another page called all products
+
+in this page it will looked like an ecommerce site,
+
+split the page into 4 section for normal monitor in vertical orientation
+
+left side is a filter / category menu that will never colaps,
+
