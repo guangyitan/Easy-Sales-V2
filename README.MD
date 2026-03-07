@@ -35,13 +35,20 @@ The prototype focuses on:
 - User can view items in cart with variations
 - User can adjust quantities
 - User can remove items
-- User can proceed to checkout
+- User can proceed to checkout → **Login Page**
 
-5. Customer Information Page (`customer-info.html`)
+5. Login Page (`login.html`)
+- User chooses login method: Email or Phone Number
+- User enters credentials and requests OTP
+- User enters 6-digit OTP code (Demo: 123456)
+- After successful verification → **Customer Information Page**
+
+6. Customer Information Page (`customer-info.html`)
 - User can update customer information: Name, phone number, email, address, delivery address
+- Login information (email/phone) is pre-filled if logged in
 - User can proceed to payment
 
-6. Payment Page (`payment.html`)
+7. Payment Page (`payment.html`)
 - User can select payment method: cash, e-wallet, credit card, duitnow QR
 - User can complete order
 - Print a Sales Order, show message to ask customer to pay at counter
@@ -97,6 +104,7 @@ Easy Sales V2/
 ├── products.html             # Product grid with category filtering
 ├── product-details.html      # Individual product details with variations
 ├── cart.html                 # Shopping cart management
+├── login.html                # Login/signup with OTP verification
 ├── customer-info.html        # Customer information form
 ├── payment.html              # Payment method selection and checkout
 ├── index.html                # Original single-page version (legacy)
@@ -114,6 +122,7 @@ Easy Sales V2/
 - **Separate HTML Files**: Each page is now a separate HTML file for better organization.
 - **Product Variations**: Products now have multiple variations (size, type, specifications).
 - **Enhanced Product Details**: Dedicated page for product information and customization.
+- **Login/Signup System**: Email or phone login with OTP verification (Demo OTP: 123456).
 - **Session Storage**: Cart and customer data persist across page navigation.
 - **Touch-Friendly Design**: Optimized for kiosk touch screens.
 - **Responsive Layout**: Works on both vertical kiosk screens and mobile devices.

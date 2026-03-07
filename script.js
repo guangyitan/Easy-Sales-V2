@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'products':
             loadProducts();
             updateCartDisplay();
+            // Update cart total specifically for products page
+            updateProductsPageCartTotal();
             break;
         case 'product-details':
             loadProductDetails();
@@ -53,8 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'cart':
             updateCartDisplay();
             break;
-        case 'customer-info':
-            setupCustomerForm();
+        case 'login':
+            setupLoginPage();
             break;
         case 'payment':
             updateOrderSummary();
@@ -83,12 +85,16 @@ function showCart() {
     navigateToPage('cart.html');
 }
 
-function navigateToCustomerInfo() {
+function navigateToLogin() {
     if (cart.length === 0) {
         showNotification('Your cart is empty!', 'warning');
         return;
     }
-    navigateToPage('customer-info.html');
+    navigateToPage('login.html');
+}
+
+function goBackToCart() {
+    navigateToPage('cart.html');
 }
 
 function navigateToPayment() {
@@ -247,6 +253,14 @@ function addToCartFromDetails() {
     document.getElementById('quantityDisplay').textContent = '1';
 }
 
+function updateProductsPageCartTotal() {
+    const cartTotalElement = document.getElementById('cartTotal');
+    if (cartTotalElement) {
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        cartTotalElement.textContent = total.toFixed(2);
+    }
+}
+
 // Cart storage functions
 function saveCartToStorage() {
     sessionStorage.setItem('cart', JSON.stringify(cart));
@@ -264,10 +278,176 @@ function loadCartFromStorage() {
     }
 }
 
+// Login page functions
+function setupLoginPage() {
+    // Setup email login form
+    document.getElementById('emailLogin').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        requestOTP('email', email);
+    });
+    
+    // Setup phone login form
+    document.getElementById('phoneLogin').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const phone = document.getElementById('phoneNumber').value;
+        requestOTP('phone', phone);
+    });
+    
+    // Setup OTP verification form
+    document.getElementById('otpVerification').addEventListener('submit', function(e) {
+        e.preventDefault();
+        verifyOTP();
+    });
+    
+    // Setup OTP input auto-focus
+    setupOTPInputs();
+}
+
+let currentLoginMethod = '';
+let currentLoginValue = '';
+
+function showLoginMethod(method) {
+    currentLoginMethod = method;
+    
+    // Hide all forms
+    document.getElementById('loginMethodSelection').style.display = 'none';
+    document.getElementById('emailLoginForm').style.display = 'none';
+    document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('otpForm').style.display = 'none';
+    
+    // Show selected form
+    if (method === 'email') {
+        document.getElementById('emailLoginForm').style.display = 'block';
+    } else if (method === 'phone') {
+        document.getElementById('phoneLoginForm').style.display = 'block';
+    }
+}
+
+function showLoginMethodSelection() {
+    // Hide all forms
+    document.getElementById('loginMethodSelection').style.display = 'block';
+    document.getElementById('emailLoginForm').style.display = 'none';
+    document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('otpForm').style.display = 'none';
+}
+
+function requestOTP(method, value) {
+    currentLoginValue = value;
+    
+    // Simulate OTP request (in real app, this would call backend)
+    showNotification(`OTP sent to your ${method}`, 'success');
+    
+    // Show OTP form
+    document.getElementById('loginMethodSelection').style.display = 'none';
+    document.getElementById('emailLoginForm').style.display = 'none';
+    document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('otpForm').style.display = 'block';
+    
+    // Update OTP target text
+    document.getElementById('otpTarget').textContent = method === 'email' ? `email: ${value}` : `phone: ${value}`;
+    
+    // Clear OTP inputs
+    document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
+    document.querySelector('.otp-digit').focus();
+}
+
+function setupOTPInputs() {
+    const otpInputs = document.querySelectorAll('.otp-digit');
+    
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', function(e) {
+            // Only allow numbers
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            if (this.value.length === 1 && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+        
+        input.addEventListener('keydown', function(e) {
+            // Handle backspace
+            if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+        
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedData = e.clipboardData.getData('text').slice(0, 6);
+            const digits = pastedData.replace(/[^0-9]/g, '');
+            
+            digits.split('').forEach((digit, i) => {
+                if (i < otpInputs.length) {
+                    otpInputs[i].value = digit;
+                }
+            });
+            
+            // Focus on the next empty input or the last one
+            const nextEmpty = Array.from(otpInputs).findIndex(input => !input.value);
+            if (nextEmpty !== -1) {
+                otpInputs[nextEmpty].focus();
+            } else {
+                otpInputs[otpInputs.length - 1].focus();
+            }
+        });
+    });
+}
+
+function verifyOTP() {
+    const otpInputs = document.querySelectorAll('.otp-digit');
+    const otpCode = Array.from(otpInputs).map(input => input.value).join('');
+    
+    if (otpCode.length !== 6) {
+        showNotification('Please enter all 6 digits', 'warning');
+        return;
+    }
+    
+    // Simulate OTP verification (in real app, this would verify with backend)
+    if (otpCode === '123456') { // Demo OTP
+        showNotification('OTP verified successfully!', 'success');
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('loginMethod', currentLoginMethod);
+        sessionStorage.setItem('loginValue', currentLoginValue);
+        
+        // Navigate to customer info page
+        setTimeout(() => {
+            navigateToPage('customer-info.html');
+        }, 1000);
+    } else {
+        showNotification('Invalid OTP. Please try again.', 'danger');
+        // Clear OTP inputs
+        otpInputs.forEach(input => input.value = '');
+        document.querySelector('.otp-digit').focus();
+    }
+}
+
+function resendOTP() {
+    if (currentLoginValue) {
+        showNotification('OTP resent successfully!', 'info');
+        // Clear OTP inputs and focus first one
+        document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
+        document.querySelector('.otp-digit').focus();
+    }
+}
+
 // Customer form setup
 function setupCustomerForm() {
     const orderType = sessionStorage.getItem('orderType') || 'Pickup';
     document.getElementById('orderType').value = orderType.charAt(0).toUpperCase() + orderType.slice(1);
+    
+    // Pre-fill login information if logged in
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+    const loginMethod = sessionStorage.getItem('loginMethod');
+    const loginValue = sessionStorage.getItem('loginValue');
+    
+    if (isLoggedIn && loginMethod && loginValue) {
+        if (loginMethod === 'email') {
+            document.getElementById('customerEmail').value = loginValue;
+        } else if (loginMethod === 'phone') {
+            document.getElementById('customerPhone').value = loginValue;
+        }
+    }
     
     document.getElementById('customerForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -355,6 +535,9 @@ function updateCartDisplay() {
     if (cartItems) cartItems.innerHTML = html;
     if (cartCount) cartCount.textContent = itemCount;
     if (cartTotal) cartTotal.textContent = total.toFixed(2);
+    
+    // Also update products page cart total if on products page
+    updateProductsPageCartTotal();
 }
 
 function removeFromCart(productId, variation) {

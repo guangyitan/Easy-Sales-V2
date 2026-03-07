@@ -34,16 +34,19 @@
             </div>
             
             <!-- Products Grid -->
-            <div class="col-md-9 col-lg-10">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2>Products</h2>
-                    <button class="btn btn-success" onclick="showCart()">
+            <div class="col-md-9 col-lg-10 d-flex flex-column">
+                <h2 class="mb-3">Products</h2>
+                <div class="row g-3 flex-grow-1" id="productsGrid">
+                    <!-- Products will be dynamically added here -->
+                </div>
+                
+                <!-- Fixed Cart Button at Bottom -->
+                <div class="cart-fab-container">
+                    <button class="btn btn-primary btn-lg cart-fab" onclick="showCart()">
                         <i class="bi bi-cart3 me-2"></i>View Cart
                         <span class="badge bg-danger" id="cartCount">0</span>
+                        <div class="cart-total">RM <span id="cartTotal">0.00</span></div>
                     </button>
-                </div>
-                <div class="row g-3" id="productsGrid">
-                    <!-- Products will be dynamically added here -->
                 </div>
             </div>
         </div>
