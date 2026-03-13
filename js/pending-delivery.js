@@ -167,8 +167,8 @@ function createDeliveryCard(delivery) {
                 <button class="btn btn-sm btn-outline-primary" onclick="showDeliveryDetails('${delivery.id}')">
                     <i class="bi bi-eye"></i>
                 </button>
-                <button class="btn btn-sm btn-success" onclick="quickMarkAsDelivered('${delivery.id}')">
-                    <i class="bi bi-truck"></i>
+                <button class="btn btn-sm btn-success" onclick="quickGenerateInvoice('${delivery.id}')">
+                    <i class="bi bi-receipt-cutoff"></i>
                 </button>
             </div>
         </div>
@@ -262,28 +262,54 @@ function showDeliveryDetails(deliveryId) {
             <table class="table table-sm">
                 <thead>
                     <tr>
+                        <th>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAllItems" onchange="toggleAllItems()">
+                                <label class="form-check-label" for="selectAllItems">Select All</label>
+                            </div>
+                        </th>
                         <th>Item Name</th>
                         <th>Variation</th>
                         <th>Quantity</th>
                         <th>Price</th>
                         <th>Total</th>
+                        <th>Lorry Size</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${delivery.items.map(item => `
+                    ${delivery.items.map((item, index) => `
                         <tr>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input item-checkbox" type="checkbox" id="item_${index}" value="${index}" onchange="updateSelectionCount()">
+                                    <label class="form-check-label" for="item_${index}"></label>
+                                </div>
+                            </td>
                             <td>${item.name}</td>
                             <td>${item.variation}</td>
                             <td>${item.quantity}</td>
                             <td>RM ${item.price.toFixed(2)}</td>
                             <td>RM ${(item.price * item.quantity).toFixed(2)}</td>
+                            <td>
+                                <select class="form-select form-select-sm" id="lorrySize_${index}" onchange="updateItemLorrySize(${index})">
+                                    <option value="">Select Lorry</option>
+                                    <option value="1-ton">1 Ton</option>
+                                    <option value="3-ton">3 Ton</option>
+                                    <option value="5-ton">5 Ton</option>
+                                    <option value="10-ton">10 Ton</option>
+                                    <option value="20-ton">20 Ton</option>
+                                    <option value="trailer">Trailer</option>
+                                    <option value="long-trailer">Long Trailer</option>
+                                </select>
+                            </td>
                         </tr>
                     `).join('')}
                 </tbody>
                 <tfoot>
                     <tr class="table-success">
-                        <td colspan="4" class="text-end fw-bold">Total:</td>
+                        <td colspan="5" class="text-end fw-bold">Total:</td>
                         <td class="fw-bold">RM ${delivery.totalAmount.toFixed(2)}</td>
+                        <td></td>
                     </tr>
                 </tfoot>
             </table>
@@ -295,17 +321,268 @@ function showDeliveryDetails(deliveryId) {
 }
 
 function quickMarkAsDelivered(deliveryId) {
-    if (confirm('Are you sure you want to mark this order as delivered?')) {
-        markDeliveryAsDelivered(deliveryId);
+    if (confirm('Are you sure you want to generate invoice and mark this order as delivered?')) {
+        generateInvoiceAndDOForDelivery(deliveryId);
     }
 }
 
-function markAsDelivered() {
-    if (currentDeliveryId) {
-        markDeliveryAsDelivered(currentDeliveryId);
-        const modal = bootstrap.Modal.getInstance(document.getElementById('deliveryModal'));
+function generateInvoiceAndDO() {
+    if (!currentDeliveryId) {
+        showNotification('No delivery selected', 'warning');
+        return;
+    }
+    
+    // Find the delivery first
+    const delivery = pendingDeliveries.find(d => d.id === currentDeliveryId);
+    if (!delivery) return;
+    
+    // Get selected items
+    const selectedCheckboxes = document.querySelectorAll('.item-checkbox');
+    const selectedItems = [];
+    let missingLorrySizes = [];
+    
+    selectedCheckboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+            const lorrySizeElement = document.getElementById(`lorrySize_${index}`);
+            const lorrySize = lorrySizeElement ? lorrySizeElement.value : '';
+            
+            if (!lorrySize) {
+                missingLorrySizes.push(delivery.items[index].name);
+            }
+            
+            selectedItems.push({
+                ...delivery.items[index],
+                lorrySize: lorrySize || 'Not Assigned'
+            });
+        }
+    });
+    
+    if (selectedItems.length === 0) {
+        showNotification('Please select at least one item to generate invoice', 'warning');
+        return; // Don't close modal
+    }
+    
+    if (missingLorrySizes.length > 0) {
+        showNotification(`Please assign lorry size for: ${missingLorrySizes.join(', ')}`, 'warning');
+        return; // Don't close modal
+    }
+    
+    // Generate invoice number
+    const invoiceNumber = 'INV' + Date.now().toString().slice(-8);
+    const doNumber = 'DO' + Date.now().toString().slice(-8);
+    
+    // Create invoice data
+    const invoiceData = {
+        invoiceNumber: invoiceNumber,
+        doNumber: doNumber,
+        customerName: delivery.customerName,
+        customerPhone: delivery.customerPhone,
+        deliveryAddress: delivery.deliveryAddress,
+        orderDate: delivery.orderDate,
+        deliveryDate: delivery.deliveryDate,
+        items: selectedItems,
+        totalAmount: selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        generatedDate: new Date().toISOString().split('T')[0]
+    };
+    
+    // Save to completed deliveries
+    const completedDeliveries = JSON.parse(localStorage.getItem('completedDeliveries') || '[]');
+    const completedDelivery = {
+        ...delivery,
+        status: 'delivered',
+        deliveredDate: new Date().toISOString().split('T')[0],
+        invoiceNumber: invoiceNumber,
+        doNumber: doNumber,
+        deliveredItems: selectedItems,
+        originalItems: delivery.items
+    };
+    completedDeliveries.push(completedDelivery);
+    localStorage.setItem('completedDeliveries', JSON.stringify(completedDeliveries));
+    
+    // Remove from pending deliveries
+    const deliveryIndex = pendingDeliveries.findIndex(d => d.id === currentDeliveryId);
+    if (deliveryIndex !== -1) {
+        pendingDeliveries.splice(deliveryIndex, 1);
+    }
+    
+    // Generate printable invoice
+    generatePrintableInvoice(invoiceData);
+    
+    // Refresh display
+    loadPendingDeliveries();
+    
+    // Close modal only after successful invoice generation
+    const modal = bootstrap.Modal.getInstance(document.getElementById('deliveryModal'));
+    if (modal) {
         modal.hide();
     }
+    
+    showNotification(`Invoice ${invoiceNumber} and DO ${doNumber} generated!`, 'success');
+}
+
+function generateInvoiceAndDOForDelivery(deliveryId) {
+    // Find the delivery
+    const delivery = pendingDeliveries.find(d => d.id === deliveryId);
+    if (!delivery) return;
+    
+    // Get selected items
+    const selectedCheckboxes = document.querySelectorAll('.item-checkbox');
+    const selectedItems = [];
+    let missingLorrySizes = [];
+    
+    selectedCheckboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+            const lorrySizeElement = document.getElementById(`lorrySize_${index}`);
+            const lorrySize = lorrySizeElement ? lorrySizeElement.value : '';
+            
+            if (!lorrySize) {
+                missingLorrySizes.push(delivery.items[index].name);
+            }
+            
+            selectedItems.push({
+                ...delivery.items[index],
+                lorrySize: lorrySize || 'Not Assigned'
+            });
+        }
+    });
+    
+    if (selectedItems.length === 0) {
+        showNotification('Please select at least one item to generate invoice', 'warning');
+        return;
+    }
+    
+    if (missingLorrySizes.length > 0) {
+        showNotification(`Please assign lorry size for: ${missingLorrySizes.join(', ')}`, 'warning');
+        return;
+    }
+    
+    // Generate invoice number
+    const invoiceNumber = 'INV' + Date.now().toString().slice(-8);
+    const doNumber = 'DO' + Date.now().toString().slice(-8);
+    
+    // Create invoice data
+    const invoiceData = {
+        invoiceNumber: invoiceNumber,
+        doNumber: doNumber,
+        customerName: delivery.customerName,
+        customerPhone: delivery.customerPhone,
+        deliveryAddress: delivery.deliveryAddress,
+        orderDate: delivery.orderDate,
+        deliveryDate: delivery.deliveryDate,
+        items: selectedItems,
+        totalAmount: selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        generatedDate: new Date().toISOString().split('T')[0]
+    };
+    
+    // Save to completed deliveries
+    const completedDeliveries = JSON.parse(localStorage.getItem('completedDeliveries') || '[]');
+    const completedDelivery = {
+        ...delivery,
+        status: 'delivered',
+        deliveredDate: new Date().toISOString().split('T')[0],
+        invoiceNumber: invoiceNumber,
+        doNumber: doNumber,
+        deliveredItems: selectedItems,
+        originalItems: delivery.items
+    };
+    completedDeliveries.push(completedDelivery);
+    localStorage.setItem('completedDeliveries', JSON.stringify(completedDeliveries));
+    
+    // Remove from pending deliveries
+    const deliveryIndex = pendingDeliveries.findIndex(d => d.id === deliveryId);
+    if (deliveryIndex !== -1) {
+        pendingDeliveries.splice(deliveryIndex, 1);
+    }
+    
+    // Generate printable invoice
+    generatePrintableInvoice(invoiceData);
+    
+    // Refresh display
+    loadPendingDeliveries();
+    
+    showNotification(`Invoice ${invoiceNumber} and DO ${doNumber} generated!`, 'success');
+}
+
+function generatePrintableInvoice(invoiceData) {
+    // Create printable invoice content
+    const invoiceContent = `
+        <html>
+        <head>
+            <title>Delivery Order - ${invoiceData.invoiceNumber}</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .info-section { margin-bottom: 20px; }
+                .items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                .items-table th { background-color: #f2f2f2; font-weight: bold; }
+                .total { text-align: right; font-weight: bold; }
+                .footer { margin-top: 30px; text-align: center; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>DELIVERY ORDER</h1>
+                <h2>Invoice: ${invoiceData.invoiceNumber}</h2>
+                <h2>Delivery Order: ${invoiceData.doNumber}</h2>
+            </div>
+            
+            <div class="info-section">
+                <h3>Customer Information</h3>
+                <p><strong>Name:</strong> ${invoiceData.customerName}</p>
+                <p><strong>Phone:</strong> ${invoiceData.customerPhone}</p>
+                <p><strong>Delivery Address:</strong> ${invoiceData.deliveryAddress}</p>
+                <p><strong>Order Date:</strong> ${invoiceData.orderDate}</p>
+                <p><strong>Delivery Date:</strong> ${invoiceData.deliveryDate}</p>
+            </div>
+            
+            <div class="info-section">
+                <h3>Delivered Items</h3>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Variation</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Lorry Size</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${invoiceData.items.map(item => `
+                            <tr>
+                                <td>${item.name}</td>
+                                <td>${item.variation}</td>
+                                <td>${item.quantity}</td>
+                                <td>RM ${item.price.toFixed(2)}</td>
+                                <td>RM ${(item.price * item.quantity).toFixed(2)}</td>
+                                <td>${item.lorrySize}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="total">Total:</td>
+                            <td colspan="2" class="total">RM ${invoiceData.totalAmount.toFixed(2)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <div class="footer">
+                <p><strong>Generated Date:</strong> ${invoiceData.generatedDate}</p>
+                <p>Signature: _________________</p>
+            </div>
+        </body>
+        </html>
+    `;
+    
+    // Create print window and show invoice
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(invoiceContent);
+    printWindow.document.close();
+    printWindow.print();
 }
 
 function markDeliveryAsDelivered(deliveryId) {
@@ -355,4 +632,98 @@ function refreshDeliveries() {
     // In real app, this would fetch fresh data from backend
     loadPendingDeliveries();
     showNotification('Delivery list refreshed!', 'info');
+}
+
+function updateLorrySize() {
+    const lorrySize = document.getElementById('lorrySize').value;
+    if (lorrySize && currentDeliveryId) {
+        // Find the delivery and update lorry size
+        const deliveryIndex = pendingDeliveries.findIndex(d => d.id === currentDeliveryId);
+        if (deliveryIndex !== -1) {
+            pendingDeliveries[deliveryIndex].lorrySize = lorrySize;
+            showNotification(`Lorry size updated to ${lorrySize.replace('-', ' ').toUpperCase()}`, 'success');
+        }
+    }
+}
+
+function updateItemLorrySize(itemIndex) {
+    const lorrySize = document.getElementById(`lorrySize_${itemIndex}`).value;
+    if (lorrySize && currentDeliveryId) {
+        // Find the delivery and update specific item lorry size
+        const deliveryIndex = pendingDeliveries.findIndex(d => d.id === currentDeliveryId);
+        if (deliveryIndex !== -1) {
+            // Initialize lorrySizes array if it doesn't exist
+            if (!pendingDeliveries[deliveryIndex].lorrySizes) {
+                pendingDeliveries[deliveryIndex].lorrySizes = [];
+            }
+            
+            // Update lorry size for specific item
+            pendingDeliveries[deliveryIndex].lorrySizes[itemIndex] = lorrySize;
+            
+            const itemName = pendingDeliveries[deliveryIndex].items[itemIndex].name;
+            showNotification(`${itemName} lorry size updated to ${lorrySize.replace('-', ' ').toUpperCase()}`, 'success');
+        }
+    }
+}
+
+function toggleAllItems() {
+    const selectAllCheckbox = document.getElementById('selectAllItems');
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+    const isChecked = selectAllCheckbox.checked;
+    
+    itemCheckboxes.forEach(checkbox => {
+        checkbox.checked = isChecked;
+    });
+    
+    updateSelectionCount();
+}
+
+function quickGenerateInvoice(deliveryId) {
+    // For quick generation, select all items automatically
+    const delivery = pendingDeliveries.find(d => d.id === deliveryId);
+    if (!delivery) return;
+    
+    // Set current delivery ID
+    currentDeliveryId = deliveryId;
+    
+    // Show modal first
+    showDeliveryDetails(deliveryId);
+    
+    // Wait for modal to be fully rendered, then select all items
+    setTimeout(() => {
+        const selectAllCheckbox = document.getElementById('selectAllItems');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = true;
+            toggleAllItems();
+        }
+        
+        // Then attempt to generate invoice
+        setTimeout(() => {
+            generateInvoiceAndDO();
+        }, 500);
+    }, 300);
+}
+
+function updateSelectionCount() {
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+    const selectedCount = Array.from(itemCheckboxes).filter(cb => cb.checked).length;
+    const totalCount = itemCheckboxes.length;
+    
+    // Update select all checkbox state
+    const selectAllCheckbox = document.getElementById('selectAllItems');
+    if (selectedCount === totalCount) {
+        selectAllCheckbox.checked = true;
+        selectAllCheckbox.indeterminate = false;
+    } else if (selectedCount === 0) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+    } else {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = true;
+    }
+    
+    // Show selection count
+    if (selectedCount > 0) {
+        showNotification(`${selectedCount} item(s) selected`, 'info');
+    }
 }
