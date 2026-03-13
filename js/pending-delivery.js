@@ -167,9 +167,6 @@ function createDeliveryCard(delivery) {
                 <button class="btn btn-sm btn-outline-primary" onclick="showDeliveryDetails('${delivery.id}')">
                     <i class="bi bi-eye"></i>
                 </button>
-                <button class="btn btn-sm btn-success" onclick="quickGenerateInvoice('${delivery.id}')">
-                    <i class="bi bi-receipt-cutoff"></i>
-                </button>
             </div>
         </div>
         
@@ -385,24 +382,74 @@ function generateInvoiceAndDO() {
         generatedDate: new Date().toISOString().split('T')[0]
     };
     
-    // Save to completed deliveries
-    const completedDeliveries = JSON.parse(localStorage.getItem('completedDeliveries') || '[]');
-    const completedDelivery = {
-        ...delivery,
-        status: 'delivered',
-        deliveredDate: new Date().toISOString().split('T')[0],
-        invoiceNumber: invoiceNumber,
-        doNumber: doNumber,
-        deliveredItems: selectedItems,
-        originalItems: delivery.items
-    };
-    completedDeliveries.push(completedDelivery);
-    localStorage.setItem('completedDeliveries', JSON.stringify(completedDeliveries));
-    
     // Remove from pending deliveries
     const deliveryIndex = pendingDeliveries.findIndex(d => d.id === currentDeliveryId);
     if (deliveryIndex !== -1) {
-        pendingDeliveries.splice(deliveryIndex, 1);
+        // Get the original delivery
+        const originalDelivery = pendingDeliveries[deliveryIndex];
+        
+        // Create updated delivery with only delivered items
+        const updatedDelivery = {
+            ...originalDelivery,
+            status: 'delivered',
+            deliveredDate: new Date().toISOString().split('T')[0],
+            invoiceNumber: invoiceNumber,
+            doNumber: doNumber,
+            deliveredItems: selectedItems,
+            // Keep only non-delivered items in the order
+            items: originalDelivery.items.filter((item, index) => {
+                // Check if this item was selected for delivery
+                const wasSelected = selectedItems.some(selectedItem => 
+                    selectedItem.name === item.name && 
+                    selectedItem.variation === item.variation
+                );
+                
+                // Keep item if it wasn't selected for delivery
+                if (!wasSelected) {
+                    return item;
+                }
+                return null; // Remove selected items from the order
+            }).filter(item => item !== null),
+            totalAmount: selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            generatedDate: new Date().toISOString().split('T')[0]
+        };
+        
+        // Update the delivery in pending list
+        pendingDeliveries[deliveryIndex] = updatedDelivery;
+        
+        // Create new pending order for remaining items if any
+        const remainingItems = originalDelivery.items.filter((item, index) => {
+            const wasSelected = selectedItems.some(selectedItem => 
+                selectedItem.name === item.name && 
+                selectedItem.variation === item.variation
+            );
+            return wasSelected; // Keep only items that were selected
+        });
+        
+        if (remainingItems.length > 0) {
+            // Create new delivery for remaining items
+            const newDeliveryId = 'ORD' + Date.now().toString().slice(-8);
+            const newDelivery = {
+                id: newDeliveryId,
+                customerName: originalDelivery.customerName,
+                customerPhone: originalDelivery.customerPhone,
+                deliveryAddress: originalDelivery.deliveryAddress,
+                orderDate: originalDelivery.orderDate,
+                deliveryDate: originalDelivery.deliveryDate,
+                items: remainingItems,
+                totalAmount: remainingItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                status: 'pending',
+                generatedDate: new Date().toISOString().split('T')[0]
+            };
+            
+            pendingDeliveries.push(newDelivery);
+            showNotification(`New delivery ${newDeliveryId} created for remaining items`, 'info');
+        }
+        
+        // Save to completed deliveries
+        const completedDeliveries = JSON.parse(localStorage.getItem('completedDeliveries') || '[]');
+        completedDeliveries.push(updatedDelivery);
+        localStorage.setItem('completedDeliveries', JSON.stringify(completedDeliveries));
     }
     
     // Generate printable invoice
