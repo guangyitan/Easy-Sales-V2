@@ -2,29 +2,25 @@
 
 // Product data
 const products = [
-    // Tools
-    { id: 1, name: 'Hammer', price: 25.99, category: 'tools', image: 'https://via.placeholder.com/200x200/FF5722/white?text=Hammer', description: 'Professional claw hammer with comfortable grip', variations: ['16oz', '20oz', '24oz'] },
-    { id: 2, name: 'Screwdriver Set', price: 45.99, category: 'tools', image: 'https://via.placeholder.com/200x200/2196F3/white?text=Screwdriver', description: 'Complete screwdriver set with multiple bits', variations: ['Basic Set', 'Professional Set', 'Magnetic Set'] },
-    { id: 3, name: 'Wrench Set', price: 89.99, category: 'tools', image: 'https://via.placeholder.com/200x200/4CAF50/white?text=Wrench', description: 'Metric and standard wrench set', variations: ['8-19mm', '10-32mm', 'Adjustable'] },
-    { id: 4, name: 'Power Drill', price: 199.99, category: 'tools', image: 'https://via.placeholder.com/200x200/FF9800/white?text=Drill', description: 'Cordless power drill with battery', variations: ['12V', '18V', '20V'] },
     
-    // Materials
-    { id: 5, name: 'Nails', price: 12.99, category: 'materials', image: 'https://via.placeholder.com/200x200/795548/white?text=Nails', description: 'Assorted nails for construction', variations: ['1 inch', '2 inch', '3 inch'] },
-    { id: 6, name: 'Screws', price: 15.99, category: 'materials', image: 'https://via.placeholder.com/200x200/607D8B/white?text=Screws', description: 'Various screw types and sizes', variations: ['Wood Screws', 'Machine Screws', 'Deck Screws'] },
-    { id: 7, name: 'Paint', price: 35.99, category: 'materials', image: 'https://via.placeholder.com/200x200/E91E63/white?text=Paint', description: 'Interior and exterior paint', variations: ['White', 'Gray', 'Blue'] },
-    { id: 8, name: 'Wood Planks', price: 45.99, category: 'materials', image: 'https://via.placeholder.com/200x200/8D6E63/white?text=Wood', description: 'Pine wood planks for construction', variations: ['2x4', '2x6', '4x4'] },
+    // Roof
+    { id: 17, name: 'Genting Konkrit Contour', price: 45.99, category: 'roof', image: '/images/roof/genting-konkrit-contour.png', description: 'High-quality Genting concrete contour for roofing', variations: ['Standard', 'Premium', 'Quick Set'] },
+    { id: 18, name: 'Perabung Saga Ridge Tiles', price: 89.99, category: 'roof', image: '/images/roof/perabung-saga-ridge-tiles.png', description: 'Durable ridge tiles for roofing', variations: ['Red', 'Brown', 'Gray'] },
+    { id: 19, name: 'Sudut Hip Starter', price: 125.99, category: 'roof', image: '/images/roof/sudut-hip-starter.png', description: 'Hip starter components for roofing system', variations: ['Basic', 'Deluxe', 'Premium'] },
     
-    // Safety Equipment
-    { id: 9, name: 'Safety Helmet', price: 29.99, category: 'safety', image: 'https://via.placeholder.com/200x200/F44336/white?text=Helmet', description: 'Construction safety helmet', variations: ['Standard', 'Ventilated', 'Full Brim'] },
-    { id: 10, name: 'Safety Glasses', price: 19.99, category: 'safety', image: 'https://via.placeholder.com/200x200/9C27B0/white?text=Glasses', description: 'Protective safety glasses', variations: ['Clear', 'Tinted', 'Prescription'] },
-    { id: 11, name: 'Gloves', price: 15.99, category: 'safety', image: 'https://via.placeholder.com/200x200/00BCD4/white?text=Gloves', description: 'Work gloves with grip', variations: ['Leather', 'Nitrile', 'Cut-Resistant'] },
-    { id: 12, name: 'Safety Boots', price: 159.99, category: 'safety', image: 'https://via.placeholder.com/200x200/009688/white?text=Boots', description: 'Steel-toe safety boots with slip resistance', variations: ['Size 8', 'Size 9', 'Size 10'] },
+    // Precast Drain
+    { id: 20, name: 'U-Drain 300x300mm', price: 35.99, category: 'precast-drain', image: '/images/precast-drain/u-drain-300x300mm.png', description: 'U-channel drainage system without DWf', variations: ['300mm', '450mm', '600mm'] },
+    { id: 21, name: 'UDrain 375x375mm', price: 42.99, category: 'precast-drain', image: '/images/precast-drain/u-drain-375x375mm.png', description: 'U-channel drainage with outlet', variations: ['375mm', '450mm', '600mm'] },
     
-    // Electronics
-    { id: 13, name: 'Multimeter', price: 199.99, category: 'electronics', image: 'https://via.placeholder.com/200x200/FFC107/white?text=Multimeter', description: 'Digital multimeter with multiple functions', variations: ['Basic', 'Professional', 'Industrial'] },
-    { id: 14, name: 'Oscilloscope', price: 899.99, category: 'electronics', image: 'https://via.placeholder.com/200x200/8BC34A/white?text=Oscilloscope', description: 'Digital oscilloscope for signal analysis', variations: ['2 Channel', '4 Channel', '8 Channel'] },
-    { id: 15, name: 'Soldering Iron', price: 119.99, category: 'electronics', image: 'https://via.placeholder.com/200x200/FFEB3B/white?text=Soldering', description: 'Temperature controlled soldering iron', variations: ['30W', '60W', '100W'] },
-    { id: 16, name: 'LED Lights Set', price: 69.99, category: 'electronics', image: 'https://via.placeholder.com/200x200/CDDC39/white?text=LED', description: 'Energy-efficient LED light strips', variations: ['Warm White', 'Cool White', 'RGB'] }
+    // Pipe Culvert
+    { id: 22, name: 'Permentong 3x3', price: 89.99, category: 'pipe-culvert', image: '/images/pipe-culvert/permentong-3x3.png', description: 'Permentong class B concrete pipes', variations: ['3m', '6m', '9m'] },
+    { id: 23, name: 'Penutup Permentong 3x3', price: 95.99, category: 'pipe-culvert', image: '/images/pipe-culvert/penutup-permentong-3x3.png', description: 'Penutup class B concrete pipes', variations: ['3m', '6m', '9m'] },
+    
+    // Precast Post
+    { id: 24, name: 'Tiang Pagar Simen 3x3', price: 75.99, category: 'precast-post', image: '/images/precast-post/tiang-pagar-simen-3x3.png', description: 'Reinforced concrete posts for fencing', variations: ['3m', '4m', '5m'] },
+    { id: 25, name: 'Tiang Pagar Simen 4x4', price: 125.99, category: 'precast-post', image: '/images/precast-post/tiang-pagar-simen-4x4.png', description: 'Heavy-duty concrete posts for security', variations: ['4m', '5m', '6m'] },
+    
+    
 ];
 
 // Global variables
