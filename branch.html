@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Branch - Easy Sales V2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .branch-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .branch-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        .branch-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .branch-header h2 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .branch-header p {
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .branch-item {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .branch-item:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .branch-item.selected {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .branch-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .branch-address {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .branch-item.selected .branch-address {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .branch-contact {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .branch-item.selected .branch-contact {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .branch-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .branch-item.selected .branch-icon {
+            color: white;
+        }
+        
+        .btn-continue {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .btn-continue:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-continue:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .cart-summary {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .cart-summary h6 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="branch-container">
+        <div class="branch-card">
+            <div class="branch-header">
+                <i class="bi bi-geo-alt-fill" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                <h2>Select Branch</h2>
+                <p>Choose which branch to send this Purchase Order to</p>
+            </div>
+            
+            <!-- Cart Summary -->
+            <div class="cart-summary" id="cartSummary">
+                <h6><i class="bi bi-cart3 me-2"></i>Purchase Order Summary</h6>
+                <div id="summaryContent">
+                    <!-- Cart summary will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Branch Selection -->
+            <div id="branchSelection">
+                <div class="branch-item" onclick="selectBranch('main')">
+                    <i class="bi bi-building branch-icon"></i>
+                    <div class="branch-name">Main Branch</div>
+                    <div class="branch-address">No. 123, Jalan Merdeka, Taman Seri Setia, 43000 Kajang</div>
+                    <div class="branch-contact">
+                        <i class="bi bi-telephone me-1"></i>+60 3-1234 5678 | 
+                        <i class="bi bi-envelope me-1"></i>kajang@abuhardware.com
+                    </div>
+                </div>
+                
+                <div class="branch-item" onclick="selectBranch('north')">
+                    <i class="bi bi-geo-alt branch-icon"></i>
+                    <div class="branch-name">North Branch</div>
+                    <div class="branch-address">Lot 456, Jalan Industri 2, Kawasan Perindustrian, 47300 Puchong</div>
+                    <div class="branch-contact">
+                        <i class="bi bi-telephone me-1"></i>+60 3-8765 4321 | 
+                        <i class="bi bi-envelope me-1"></i>puchong@abuhardware.com
+                    </div>
+                </div>
+                
+                <div class="branch-item" onclick="selectBranch('south')">
+                    <i class="bi bi-geo-alt branch-icon"></i>
+                    <div class="branch-name">South Branch</div>
+                    <div class="branch-address">No. 789, Persiaran Teknologi, Cyberjaya, 63000 Selangor</div>
+                    <div class="branch-contact">
+                        <i class="bi bi-telephone me-1"></i>+60 3-9876 5432 | 
+                        <i class="bi bi-envelope me-1"></i>cyberjaya@abuhardware.com
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button class="btn btn-primary btn-continue" id="continueBtn" onclick="continueToCheckout()" disabled>
+                    <i class="bi bi-arrow-right-circle me-2"></i>Continue to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        let selectedBranch = null;
+        
+        // Load cart and display summary
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartSummary();
+            
+            // Check if this is a PO order
+            const isPOOrder = sessionStorage.getItem('isPOOrder');
+            if (!isPOOrder || isPOOrder !== 'true') {
+                // Redirect to regular checkout if not PO order
+                window.location.href = 'customer-info.html';
+                return;
+            }
+        });
+        
+        function loadCartSummary() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const summaryContent = document.getElementById('summaryContent');
+            
+            if (cart.length === 0) {
+                summaryContent.innerHTML = '<p class="text-muted">No items in cart</p>';
+                return;
+            }
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            summaryContent.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <span><strong>Total Items:</strong></span>
+                    <span>${totalItems}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span><strong>Total Amount:</strong></span>
+                    <span class="text-success fw-bold">RM ${totalAmount.toFixed(2)}</span>
+                </div>
+                <hr class="my-2">
+                <small class="text-muted">Purchase Order for ${cart.length} product${cart.length !== 1 ? 's' : ''}</small>
+            `;
+        }
+        
+        function selectBranch(branchId) {
+            // Remove previous selection
+            document.querySelectorAll('.branch-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Add selection to clicked branch
+            event.currentTarget.classList.add('selected');
+            selectedBranch = branchId;
+            
+            // Enable continue button
+            document.getElementById('continueBtn').disabled = false;
+        }
+        
+        function continueToCheckout() {
+            if (!selectedBranch) {
+                alert('Please select a branch');
+                return;
+            }
+            
+            // Store selected branch
+            sessionStorage.setItem('selectedBranch', selectedBranch);
+            
+            // Redirect to customer info page
+            window.location.href = 'customer-info.html';
+        }
+    </script>
+</body>
+</html>

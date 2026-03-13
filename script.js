@@ -100,6 +100,19 @@ function goBackToCart() {
     navigateToPage('cart.html');
 }
 
+function navigateToCustomerInfo() {
+    // Check if this is a PO order
+    const isPOOrder = sessionStorage.getItem('isPOOrder');
+    
+    if (isPOOrder && isPOOrder === 'true') {
+        // For PO orders, redirect to branch selection page
+        navigateToPage('branch.html');
+    } else {
+        // For regular orders, go to customer info page
+        navigateToPage('customer-info.html');
+    }
+}
+
 function navigateToPayment() {
     navigateToPage('payment.html');
 }

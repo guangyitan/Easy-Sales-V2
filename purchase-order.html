@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Order Management - Easy Sales V2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .po-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 300px;
+            max-width: 350px;
+            flex: 0 0 auto;
+        }
+        
+        .po-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .po-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .po-info h5 {
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .po-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .supplier-section h6 {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .supplier-details p {
+            margin: 3px 0;
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+        
+        .address-text {
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .po-summary {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.85rem;
+        }
+        
+        .total-row {
+            font-weight: 600;
+            color: #28a745;
+            border-top: 1px solid #e9ecef;
+            padding-top: 5px;
+            margin-top: 8px;
+        }
+        
+        .total-amount {
+            font-size: 1rem;
+        }
+        
+        .po-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+        }
+        
+        .main-content {
+            padding: 20px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .status-pending {
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        .status-approved {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .status-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-create-po {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px 24px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-create-po:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="d-flex flex-column h-100">
+                    <h4 class="mb-4">Abu Hardware</h4>
+                    <div class="nav flex-column nav-pills">
+                        <a class="nav-link" href="home.html">
+                            <i class="bi bi-house me-2"></i>Back to Home
+                        </a>
+                        <a class="nav-link" href="sales-order.html">
+                            <i class="bi bi-receipt me-2"></i>Sales Orders
+                        </a>
+                        <a class="nav-link" href="pending-delivery.html">
+                            <i class="bi bi-clock-history me-2"></i>Pending Delivery
+                        </a>
+                        <a class="nav-link active" href="purchase-order.html">
+                            <i class="bi bi-file-earmark-text me-2"></i>Purchase Orders
+                        </a>
+                        <hr class="my-3">
+                        <a class="nav-link text-danger" href="staff-login.html">
+                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2>Purchase Order Management</h2>
+                        <p class="text-muted mb-0">Create and manage purchase orders for suppliers</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary btn-create-po" onclick="createPurchaseOrder()">
+                            <i class="bi bi-plus-circle me-2"></i>Create PO
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- PO Cards Container -->
+                <div class="po-cards-container" id="poCardsContainer">
+                    <!-- PO cards will be dynamically added here -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyState" class="text-center py-5">
+                    <i class="bi bi-file-earmark-text" style="font-size: 4rem; color: #ccc;"></i>
+                    <h4 class="mt-3 text-muted">No Purchase Orders</h4>
+                    <p class="text-muted">No purchase orders have been created yet!</p>
+                    <button class="btn btn-primary mt-3" onclick="createPurchaseOrder()">
+                        <i class="bi bi-plus-circle me-2"></i>Create Your First PO
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        // Sample PO data (in real app, this would come from backend)
+        let purchaseOrders = [
+            {
+                id: 'PO-20240314001',
+                supplierName: 'ABC Building Supplies Sdn Bhd',
+                supplierPhone: '+60 3-12345678',
+                supplierEmail: 'sales@abcbuilding.com',
+                address: 'No. 123, Jalan Industri, Kawasan Perindustrian, 48000 Rawang',
+                orderDate: '2024-03-14',
+                items: [
+                    { name: 'Genting Konkrit Contour', quantity: 50, variation: 'Standard', price: 35.99 },
+                    { name: 'U-Drain 300x300mm', quantity: 100, variation: '300mm', price: 28.99 }
+                ],
+                totalAmount: 4648.50,
+                status: 'pending'
+            },
+            {
+                id: 'PO-20240314002',
+                supplierName: 'Premier Materials Sdn Bhd',
+                supplierPhone: '+60 3-87654321',
+                supplierEmail: 'orders@premiermaterials.com',
+                address: 'Lot 456, Jalan Perdagangan, Taman Perindustrian, 47500 Subang Jaya',
+                orderDate: '2024-03-14',
+                items: [
+                    { name: 'Tiang Pagar Simen 3x3', quantity: 30, variation: '3m', price: 65.99 },
+                    { name: 'Permentong 3x3', quantity: 20, variation: '3m', price: 75.99 }
+                ],
+                totalAmount: 3499.50,
+                status: 'approved'
+            }
+        ];
+
+        // Load POs on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPurchaseOrders();
+        });
+
+        function loadPurchaseOrders() {
+            const container = document.getElementById('poCardsContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            // Clear existing content
+            container.innerHTML = '';
+            
+            if (purchaseOrders.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            container.style.display = 'flex';
+            emptyState.style.display = 'none';
+            
+            // Create PO cards
+            purchaseOrders.forEach(po => {
+                const card = createPOCard(po);
+                container.appendChild(card);
+            });
+        }
+
+        function createPOCard(po) {
+            const card = document.createElement('div');
+            card.className = 'po-card';
+            
+            // Determine status badge
+            let statusBadge = '';
+            let statusClass = '';
+            
+            switch(po.status) {
+                case 'pending':
+                    statusBadge = 'Pending';
+                    statusClass = 'status-pending';
+                    break;
+                case 'approved':
+                    statusBadge = 'Approved';
+                    statusClass = 'status-approved';
+                    break;
+                case 'rejected':
+                    statusBadge = 'Rejected';
+                    statusClass = 'status-rejected';
+                    break;
+                default:
+                    statusBadge = 'Unknown';
+                    statusClass = 'status-pending';
+            }
+            
+            card.innerHTML = `
+                <div class="po-card-header">
+                    <div class="po-info">
+                        <h5 class="po-number">${po.id}</h5>
+                        <span class="status-badge badge ${statusClass}">${statusBadge}</span>
+                    </div>
+                    <div class="po-actions">
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewPODetails('${po.id}')">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="po-supplier-info">
+                    <div class="supplier-section">
+                        <h6><i class="bi bi-building me-2"></i>Supplier Information</h6>
+                        <div class="supplier-details">
+                            <p><strong>Name:</strong> ${po.supplierName}</p>
+                            <p><strong>Phone:</strong> ${po.supplierPhone}</p>
+                            <p><strong>Email:</strong> ${po.supplierEmail}</p>
+                            <p><strong>Address:</strong></p>
+                            <p class="address-text">${po.address}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="po-summary">
+                    <div class="summary-row">
+                        <span><i class="bi bi-calendar3 me-2"></i>Order Date:</span>
+                        <span>${po.orderDate}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span><i class="bi bi-box-seam me-2"></i>Items:</span>
+                        <span>${po.items.length} items</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span><i class="bi bi-cash me-2"></i>Total Amount:</span>
+                        <span class="total-amount">RM ${po.totalAmount.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function createPurchaseOrder() {
+            // Set PO mode in sessionStorage
+            sessionStorage.setItem('isPOOrder', 'true');
+            
+            // Redirect to index.html
+            window.location.href = 'index.html';
+        }
+
+        function viewPODetails(poId) {
+            // For now, just show a simple alert
+            alert('PO Details for ' + poId + ' would be shown here');
+        }
+    </script>
+</body>
+</html>
