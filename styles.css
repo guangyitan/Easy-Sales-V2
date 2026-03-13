@@ -583,6 +583,10 @@ body {
     transition: all 0.3s ease;
 }
 
+.sidebar .nav-link i {
+    color: inherit;
+}
+
 .sidebar .nav-link:hover {
     background-color: var(--light-color);
     transform: translateX(5px);
@@ -590,6 +594,10 @@ body {
 
 .sidebar .nav-link.active {
     background-color: var(--primary-color);
+    color: var(--dark-color);
+}
+
+.sidebar .nav-link.active i {
     color: var(--dark-color);
 }
 

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Order Management - Easy Sales V2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .sales-order-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 300px;
+            max-width: 350px;
+            flex: 0 0 auto;
+        }
+        
+        .sales-order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .sales-order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .sales-order-info h5 {
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .sales-order-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .customer-section h6 {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .customer-details p {
+            margin: 3px 0;
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+        
+        .address-text {
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .sales-order-summary {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.85rem;
+        }
+        
+        .total-row {
+            font-weight: 600;
+            color: #28a745;
+            border-top: 1px solid #e9ecef;
+            padding-top: 5px;
+            margin-top: 8px;
+        }
+        
+        .total-amount {
+            font-size: 1rem;
+        }
+        
+        .sales-order-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .payment-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+        }
+        
+        .order-type-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+        }
+        
+        .main-content {
+            padding: 20px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .status-unpaid {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .status-partial {
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        .status-paid {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .status-pending {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .status-completed {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .delivery-type {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .pickup-type {
+            background-color: #6f42c1;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="d-flex flex-column h-100">
+                    <h4 class="mb-4">Abu Hardware</h4>
+                    <div class="nav flex-column nav-pills">
+                        <a class="nav-link" href="home.html">
+                            <i class="bi bi-house me-2"></i>Back to Home
+                        </a>
+                        <a class="nav-link active" href="sales-order.html">
+                            <i class="bi bi-receipt me-2"></i>Sales Orders
+                        </a>
+                        <a class="nav-link" href="pending-delivery.html">
+                            <i class="bi bi-clock-history me-2"></i>Pending Delivery
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Sales Order Management</h2>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" onclick="refreshSalesOrders()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Sales Order Cards Container -->
+                <div class="sales-order-cards-container" id="salesOrderCardsContainer">
+                    <!-- Sales order cards will be dynamically added here -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyState" class="text-center py-5" style="display: none;">
+                    <i class="bi bi-receipt" style="font-size: 4rem; color: #ccc;"></i>
+                    <h4 class="mt-3 text-muted">No Sales Orders</h4>
+                    <p class="text-muted">No orders have been placed yet!</p>
+                    <button class="btn btn-primary mt-3" onclick="navigateToPage('home.html')">
+                        <i class="bi bi-house me-2"></i>Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Order Details Modal -->
+    <div class="modal fade" id="salesOrderModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sales Order Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="salesOrderDetails">
+                        <!-- Sales order details will be dynamically added here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="receivePayment()">
+                        <i class="bi bi-cash me-2"></i>Receive Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Receive Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="paymentDetails">
+                        <!-- Payment details will be dynamically added here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="processPayment()">
+                        <i class="bi bi-check-circle me-2"></i>Process Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/sales-order.js"></script>
+</body>
+</html>
