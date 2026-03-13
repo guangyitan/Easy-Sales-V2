@@ -3,7 +3,7 @@
 // Sample pending delivery data (in real app, this would come from backend)
 let pendingDeliveries = [
     {
-        id: 'ORD20240313001',
+        id: 'SO-20240313001',
         customerName: 'Ahmad bin Ismail',
         customerPhone: '+60 12-3456789',
         deliveryAddress: 'No. 123, Jalan Merdeka, Taman Seri Setia, 43000 Kajang',
@@ -19,7 +19,7 @@ let pendingDeliveries = [
         orderType: 'Delivery'
     },
     {
-        id: 'ORD20240313002',
+        id: 'SO-20240313002',
         customerName: 'Siti Aminah binti Omar',
         customerPhone: '+60 19-8765432',
         deliveryAddress: 'Lot 456, Jalan Industri 2, Kawasan Perindustrian, 47300 Puchong',
@@ -36,7 +36,7 @@ let pendingDeliveries = [
         orderType: 'Delivery'
     },
     {
-        id: 'ORD20240313003',
+        id: 'SO-20240313003',
         customerName: 'Mohamed bin Hassan',
         customerPhone: '+60 16-2345678',
         deliveryAddress: 'No. 789, Persiaran Teknologi, Cyberjaya, 63000 Selangor',
@@ -52,7 +52,7 @@ let pendingDeliveries = [
         orderType: 'Delivery'
     },
     {
-        id: 'ORD20240313004',
+        id: 'SO-20240313004',
         customerName: 'Fatimah binti Ali',
         customerPhone: '+60 14-9876543',
         deliveryAddress: 'No. 321, Jalan Raya Cheras, 56000 Kuala Lumpur',
@@ -69,7 +69,7 @@ let pendingDeliveries = [
         orderType: 'Delivery'
     },
     {
-        id: 'ORD20240313005',
+        id: 'SO-20240313005',
         customerName: 'Razak bin Mohamad',
         customerPhone: '+60 11-2345678',
         deliveryAddress: 'No. 654, Jalan Sultan Abdul Samad, 50000 Kuala Lumpur',
@@ -85,7 +85,7 @@ let pendingDeliveries = [
         orderType: 'Delivery'
     },
     {
-        id: 'ORD20240313006',
+        id: 'SO-20240313006',
         customerName: 'Norhayati binti Ibrahim',
         customerPhone: '+60 13-8765432',
         deliveryAddress: 'No. 987, Jalan Ampang Hilir, 55000 Kuala Lumpur',
@@ -102,7 +102,7 @@ let pendingDeliveries = [
         orderType: 'Delivery'
     },
     {
-        id: 'ORD20240313007',
+        id: 'SO-20240313007',
         customerName: 'Abdul Rahman bin Yusof',
         customerPhone: '+60 17-3456789',
         deliveryAddress: 'No. 246, Jalan Damansara, 47810 Petaling Jaya',
@@ -433,7 +433,7 @@ function generateInvoiceAndDO() {
         
         if (remainingItems.length > 0) {
             // Create new delivery for remaining items
-            const newDeliveryId = 'ORD' + Date.now().toString().slice(-8);
+            const newDeliveryId = 'SO-' + Date.now().toString().slice(-8);
             const newDelivery = {
                 id: newDeliveryId,
                 customerName: originalDelivery.customerName,
@@ -574,7 +574,7 @@ function generatePrintableInvoice(invoiceData) {
         </head>
         <body>
             <div class="header">
-                <h1>DELIVERY ORDER</h1>
+                <h1>DELIVERY SO-ER</h1>
                 <h2>Invoice: ${invoiceData.invoiceNumber}</h2>
                 <h2>Delivery Order: ${invoiceData.doNumber}</h2>
             </div>
