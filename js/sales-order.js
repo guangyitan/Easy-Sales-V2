@@ -17,7 +17,7 @@ let salesOrders = [
             { name: 'Sudut Hip Starter', quantity: 3, variation: 'Basic', price: 125.99, image: 'images/roof/sudut-hip-starter.png' }
         ],
         totalAmount: 651.90,
-        status: 'pending',
+        status: 'unpaid',
         payments: []
     },
     {
@@ -95,7 +95,7 @@ let salesOrders = [
             { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99, image: 'images/precast-drain/u-drain-300x300mm.png' }
         ],
         totalAmount: 1319.82,
-        status: 'completed',
+        status: 'paid',
         payments: [
             { amount: 1319.82, method: 'Credit Card', date: '2024-03-14', time: '09:45 AM' }
         ]
@@ -160,12 +160,8 @@ function createSalesOrderCard(salesOrder) {
             statusBadge = 'Paid';
             statusClass = 'status-paid';
             break;
-        case 'completed':
-            statusBadge = 'Completed';
-            statusClass = 'status-completed';
-            break;
         default:
-            statusBadge = 'Pending';
+            statusBadge = 'Unknown';
             statusClass = 'status-pending';
     }
     
@@ -397,7 +393,6 @@ function getStatusColor(status) {
         case 'unpaid': return 'danger';
         case 'partial': return 'warning';
         case 'paid': return 'success';
-        case 'completed': return 'info';
         default: return 'secondary';
     }
 }
