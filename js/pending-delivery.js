@@ -10,9 +10,9 @@ let pendingDeliveries = [
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-15',
         items: [
-            { name: 'Genting Konkrit Contour', quantity: 2, variation: 'Standard', price: 45.99 },
-            { name: 'U-Drain 300x300mm', quantity: 5, variation: '300mm', price: 35.99 },
-            { name: 'Sudut Hip Starter', quantity: 3, variation: 'Basic', price: 125.99 }
+            { name: 'Genting Konkrit Contour', quantity: 2, variation: 'Standard', price: 45.99, image: 'images/roof/genting-konkrit-contour.png' },
+            { name: 'U-Drain 300x300mm', quantity: 5, variation: '300mm', price: 35.99, image: 'images/precast-drain/u-drain-300x300mm.png' },
+            { name: 'Sudut Hip Starter', quantity: 3, variation: 'Basic', price: 125.99, image: 'images/roof/sudut-hip-starter.png' }
         ],
         totalAmount: 651.90,
         status: 'pending',
@@ -26,10 +26,10 @@ let pendingDeliveries = [
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-16',
         items: [
-            { name: 'Perabung Saga Ridge Tiles', quantity: 10, variation: 'Red', price: 89.99 },
-            { name: 'Tiang Pagar Simen 3x3', quantity: 8, variation: '3m', price: 75.99 },
-            { name: 'Permentong 3x3', quantity: 4, variation: '3m', price: 89.99 },
-            { name: 'UDrain 375x375mm', quantity: 6, variation: '375mm', price: 42.99 }
+            { name: 'Perabung Saga Ridge Tiles', quantity: 10, variation: 'Red', price: 89.99, image: 'images/roof/perabung-saga-ridge-tiles.png' },
+            { name: 'Tiang Pagar Simen 3x3', quantity: 8, variation: '3m', price: 75.99, image: 'images/precast-post/tiang-pagar-simen-3x3.png' },
+            { name: 'Permentong 3x3', quantity: 4, variation: '3m', price: 89.99, image: 'images/pipe-culvert/permentong-3x3.png' },
+            { name: 'UDrain 375x375mm', quantity: 6, variation: '375mm', price: 42.99, image: 'images/precast-drain/u-drain-375x375mm.png' }
         ],
         totalAmount: 2156.81,
         status: 'pending',
@@ -43,9 +43,9 @@ let pendingDeliveries = [
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-17',
         items: [
-            { name: 'Permentong 3x3', quantity: 3, variation: '3m', price: 89.99 },
-            { name: 'Penutup Permentong 3x3', quantity: 3, variation: '3m', price: 95.99 },
-            { name: 'Genting Konkrit Contour', quantity: 2, variation: 'Premium', price: 45.99 }
+            { name: 'Permentong 3x3', quantity: 3, variation: '3m', price: 89.99, image: 'images/pipe-culvert/permentong-3x3.png' },
+            { name: 'Penutup Permentong 3x3', quantity: 3, variation: '3m', price: 95.99, image: 'images/pipe-culvert/penutup-permentong-3x3.png' },
+            { name: 'Genting Konkrit Contour', quantity: 2, variation: 'Premium', price: 45.99, image: 'images/roof/genting-konkrit-contour.png' }
         ],
         totalAmount: 735.93,
         status: 'pending',
@@ -59,10 +59,10 @@ let pendingDeliveries = [
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-18',
         items: [
-            { name: 'Sudut Hip Starter', quantity: 6, variation: 'Deluxe', price: 125.99 },
-            { name: 'UDrain 375x375mm', quantity: 4, variation: '375mm', price: 42.99 },
-            { name: 'Tiang Pagar Simen 4x4', quantity: 5, variation: '4m', price: 125.99 },
-            { name: 'Perabung Saga Ridge Tiles', quantity: 8, variation: 'Gray', price: 89.99 }
+            { name: 'Sudut Hip Starter', quantity: 6, variation: 'Deluxe', price: 125.99, image: 'images/roof/sudut-hip-starter.png' },
+            { name: 'UDrain 375x375mm', quantity: 4, variation: '375mm', price: 42.99, image: 'images/precast-drain/u-drain-375x375mm.png' },
+            { name: 'Tiang Pagar Simen 4x4', quantity: 5, variation: '4m', price: 125.99, image: 'images/precast-post/tiang-pagar-simen-4x4.png' },
+            { name: 'Perabung Saga Ridge Tiles', quantity: 8, variation: 'Gray', price: 89.99, image: 'images/roof/perabung-saga-ridge-tiles.png' }
         ],
         totalAmount: 1791.85,
         status: 'pending',
@@ -76,9 +76,9 @@ let pendingDeliveries = [
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-19',
         items: [
-            { name: 'Genting Konkrit Contour', quantity: 4, variation: 'Premium', price: 45.99 },
-            { name: 'Tiang Pagar Simen 4x4', quantity: 6, variation: '4m', price: 125.99 },
-            { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99 }
+            { name: 'Genting Konkrit Contour', quantity: 4, variation: 'Premium', price: 45.99, image: 'images/roof/genting-konkrit-contour.png' },
+            { name: 'Tiang Pagar Simen 4x4', quantity: 6, variation: '4m', price: 125.99, image: 'images/precast-post/tiang-pagar-simen-4x4.png' },
+            { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99, image: 'images/precast-drain/u-drain-300x300mm.png' }
         ],
         totalAmount: 1319.82,
         status: 'pending',
@@ -92,10 +92,10 @@ let pendingDeliveries = [
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-20',
         items: [
-            { name: 'Perabung Saga Ridge Tiles', quantity: 15, variation: 'Brown', price: 89.99 },
-            { name: 'Permentong 3x3', quantity: 5, variation: '6m', price: 89.99 },
-            { name: 'Penutup Permentong 3x3', quantity: 5, variation: '6m', price: 95.99 },
-            { name: 'Tiang Pagar Simen 3x3', quantity: 4, variation: '5m', price: 75.99 }
+            { name: 'Perabung Saga Ridge Tiles', quantity: 15, variation: 'Brown', price: 89.99, image: 'images/roof/perabung-saga-ridge-tiles.png' },
+            { name: 'Permentong 3x3', quantity: 5, variation: '6m', price: 89.99, image: 'images/pipe-culvert/permentong-3x3.png' },
+            { name: 'Penutup Permentong 3x3', quantity: 5, variation: '6m', price: 95.99, image: 'images/pipe-culvert/penutup-permentong-3x3.png' },
+            { name: 'Tiang Pagar Simen 3x3', quantity: 4, variation: '5m', price: 75.99, image: 'images/precast-post/tiang-pagar-simen-3x3.png' }
         ],
         totalAmount: 2549.80,
         status: 'pending',
@@ -109,11 +109,11 @@ let pendingDeliveries = [
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-21',
         items: [
-            { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99 },
-            { name: 'Sudut Hip Starter', quantity: 4, variation: 'Premium', price: 125.99 },
-            { name: 'Genting Konkrit Contour', quantity: 3, variation: 'Quick Set', price: 45.99 },
-            { name: 'Tiang Pagar Simen 4x4', quantity: 2, variation: '6m', price: 125.99 },
-            { name: 'Perabung Saga Ridge Tiles', quantity: 6, variation: 'Red', price: 89.99 }
+            { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99, image: 'images/precast-drain/u-drain-300x300mm.png' },
+            { name: 'Sudut Hip Starter', quantity: 4, variation: 'Premium', price: 125.99, image: 'images/roof/sudut-hip-starter.png' },
+            { name: 'Genting Konkrit Contour', quantity: 3, variation: 'Quick Set', price: 45.99, image: 'images/roof/genting-konkrit-contour.png' },
+            { name: 'Tiang Pagar Simen 4x4', quantity: 2, variation: '6m', price: 125.99, image: 'images/precast-post/tiang-pagar-simen-4x4.png' },
+            { name: 'Perabung Saga Ridge Tiles', quantity: 6, variation: 'Red', price: 89.99, image: 'images/roof/perabung-saga-ridge-tiles.png' }
         ],
         totalAmount: 1239.80,
         status: 'pending',
@@ -265,7 +265,7 @@ function showDeliveryDetails(deliveryId) {
                                 <label class="form-check-label" for="selectAllItems">Select All</label>
                             </div>
                         </th>
-                        <th>Item Name</th>
+                        <th>Item</th>
                         <th>Variation</th>
                         <th>Quantity</th>
                         <th>Price</th>
@@ -282,7 +282,12 @@ function showDeliveryDetails(deliveryId) {
                                     <label class="form-check-label" for="item_${index}"></label>
                                 </div>
                             </td>
-                            <td>${item.name}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="${item.image}" alt="${item.name}" style="width: 40px; height: 40px; margin-right: 8px; border-radius: 4px; object-fit: cover;">
+                                    <span>${item.name}</span>
+                                </div>
+                            </td>
                             <td>${item.variation}</td>
                             <td>${item.quantity}</td>
                             <td>RM ${item.price.toFixed(2)}</td>
