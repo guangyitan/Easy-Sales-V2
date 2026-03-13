@@ -46,6 +46,66 @@ let pendingDeliveries = [
         totalAmount: 555.96,
         status: 'pending',
         orderType: 'Delivery'
+    },
+    {
+        id: 'ORD20240313004',
+        customerName: 'Fatimah binti Ali',
+        customerPhone: '+60 14-9876543',
+        deliveryAddress: 'No. 321, Jalan Raya Cheras, 56000 Kuala Lumpur',
+        orderDate: '2024-03-13',
+        deliveryDate: '2024-03-18',
+        items: [
+            { name: 'Sudut Hip Starter', quantity: 6, variation: 'Deluxe', price: 125.99 },
+            { name: 'UDrain 375x375mm', quantity: 4, variation: '375mm', price: 42.99 }
+        ],
+        totalAmount: 931.90,
+        status: 'pending',
+        orderType: 'Delivery'
+    },
+    {
+        id: 'ORD20240313005',
+        customerName: 'Razak bin Mohamad',
+        customerPhone: '+60 11-2345678',
+        deliveryAddress: 'No. 654, Jalan Sultan Abdul Samad, 50000 Kuala Lumpur',
+        orderDate: '2024-03-13',
+        deliveryDate: '2024-03-19',
+        items: [
+            { name: 'Genting Konkrit Contour', quantity: 4, variation: 'Premium', price: 45.99 },
+            { name: 'Tiang Pagar Simen 4x4', quantity: 6, variation: '4m', price: 125.99 }
+        ],
+        totalAmount: 953.90,
+        status: 'pending',
+        orderType: 'Delivery'
+    },
+    {
+        id: 'ORD20240313006',
+        customerName: 'Norhayati binti Ibrahim',
+        customerPhone: '+60 13-8765432',
+        deliveryAddress: 'No. 987, Jalan Ampang Hilir, 55000 Kuala Lumpur',
+        orderDate: '2024-03-13',
+        deliveryDate: '2024-03-20',
+        items: [
+            { name: 'Perabung Saga Ridge Tiles', quantity: 15, variation: 'Brown', price: 89.99 },
+            { name: 'Permentong 3x3', quantity: 5, variation: '6m', price: 89.99 }
+        ],
+        totalAmount: 1849.80,
+        status: 'pending',
+        orderType: 'Delivery'
+    },
+    {
+        id: 'ORD20240313007',
+        customerName: 'Abdul Rahman bin Yusof',
+        customerPhone: '+60 17-3456789',
+        deliveryAddress: 'No. 246, Jalan Damansara, 47810 Petaling Jaya',
+        orderDate: '2024-03-13',
+        deliveryDate: '2024-03-21',
+        items: [
+            { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99 },
+            { name: 'Sudut Hip Starter', quantity: 4, variation: 'Premium', price: 125.99 }
+        ],
+        totalAmount: 783.88,
+        status: 'pending',
+        orderType: 'Delivery'
     }
 ];
 
