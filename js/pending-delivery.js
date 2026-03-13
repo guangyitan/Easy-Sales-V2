@@ -11,9 +11,10 @@ let pendingDeliveries = [
         deliveryDate: '2024-03-15',
         items: [
             { name: 'Genting Konkrit Contour', quantity: 2, variation: 'Standard', price: 45.99 },
-            { name: 'U-Drain 300x300mm', quantity: 5, variation: '300mm', price: 35.99 }
+            { name: 'U-Drain 300x300mm', quantity: 5, variation: '300mm', price: 35.99 },
+            { name: 'Sudut Hip Starter', quantity: 3, variation: 'Basic', price: 125.99 }
         ],
-        totalAmount: 271.93,
+        totalAmount: 651.90,
         status: 'pending',
         orderType: 'Delivery'
     },
@@ -26,9 +27,11 @@ let pendingDeliveries = [
         deliveryDate: '2024-03-16',
         items: [
             { name: 'Perabung Saga Ridge Tiles', quantity: 10, variation: 'Red', price: 89.99 },
-            { name: 'Tiang Pagar Simen 3x3', quantity: 8, variation: '3m', price: 75.99 }
+            { name: 'Tiang Pagar Simen 3x3', quantity: 8, variation: '3m', price: 75.99 },
+            { name: 'Permentong 3x3', quantity: 4, variation: '3m', price: 89.99 },
+            { name: 'UDrain 375x375mm', quantity: 6, variation: '375mm', price: 42.99 }
         ],
-        totalAmount: 1509.70,
+        totalAmount: 2156.81,
         status: 'pending',
         orderType: 'Delivery'
     },
@@ -41,9 +44,10 @@ let pendingDeliveries = [
         deliveryDate: '2024-03-17',
         items: [
             { name: 'Permentong 3x3', quantity: 3, variation: '3m', price: 89.99 },
-            { name: 'Penutup Permentong 3x3', quantity: 3, variation: '3m', price: 95.99 }
+            { name: 'Penutup Permentong 3x3', quantity: 3, variation: '3m', price: 95.99 },
+            { name: 'Genting Konkrit Contour', quantity: 2, variation: 'Premium', price: 45.99 }
         ],
-        totalAmount: 555.96,
+        totalAmount: 735.93,
         status: 'pending',
         orderType: 'Delivery'
     },
@@ -56,9 +60,11 @@ let pendingDeliveries = [
         deliveryDate: '2024-03-18',
         items: [
             { name: 'Sudut Hip Starter', quantity: 6, variation: 'Deluxe', price: 125.99 },
-            { name: 'UDrain 375x375mm', quantity: 4, variation: '375mm', price: 42.99 }
+            { name: 'UDrain 375x375mm', quantity: 4, variation: '375mm', price: 42.99 },
+            { name: 'Tiang Pagar Simen 4x4', quantity: 5, variation: '4m', price: 125.99 },
+            { name: 'Perabung Saga Ridge Tiles', quantity: 8, variation: 'Gray', price: 89.99 }
         ],
-        totalAmount: 931.90,
+        totalAmount: 1791.85,
         status: 'pending',
         orderType: 'Delivery'
     },
@@ -71,9 +77,10 @@ let pendingDeliveries = [
         deliveryDate: '2024-03-19',
         items: [
             { name: 'Genting Konkrit Contour', quantity: 4, variation: 'Premium', price: 45.99 },
-            { name: 'Tiang Pagar Simen 4x4', quantity: 6, variation: '4m', price: 125.99 }
+            { name: 'Tiang Pagar Simen 4x4', quantity: 6, variation: '4m', price: 125.99 },
+            { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99 }
         ],
-        totalAmount: 953.90,
+        totalAmount: 1319.82,
         status: 'pending',
         orderType: 'Delivery'
     },
@@ -86,9 +93,11 @@ let pendingDeliveries = [
         deliveryDate: '2024-03-20',
         items: [
             { name: 'Perabung Saga Ridge Tiles', quantity: 15, variation: 'Brown', price: 89.99 },
-            { name: 'Permentong 3x3', quantity: 5, variation: '6m', price: 89.99 }
+            { name: 'Permentong 3x3', quantity: 5, variation: '6m', price: 89.99 },
+            { name: 'Penutup Permentong 3x3', quantity: 5, variation: '6m', price: 95.99 },
+            { name: 'Tiang Pagar Simen 3x3', quantity: 4, variation: '5m', price: 75.99 }
         ],
-        totalAmount: 1849.80,
+        totalAmount: 2549.80,
         status: 'pending',
         orderType: 'Delivery'
     },
@@ -101,9 +110,12 @@ let pendingDeliveries = [
         deliveryDate: '2024-03-21',
         items: [
             { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99 },
-            { name: 'Sudut Hip Starter', quantity: 4, variation: 'Premium', price: 125.99 }
+            { name: 'Sudut Hip Starter', quantity: 4, variation: 'Premium', price: 125.99 },
+            { name: 'Genting Konkrit Contour', quantity: 3, variation: 'Quick Set', price: 45.99 },
+            { name: 'Tiang Pagar Simen 4x4', quantity: 2, variation: '6m', price: 125.99 },
+            { name: 'Perabung Saga Ridge Tiles', quantity: 6, variation: 'Red', price: 89.99 }
         ],
-        totalAmount: 783.88,
+        totalAmount: 1239.80,
         status: 'pending',
         orderType: 'Delivery'
     }
