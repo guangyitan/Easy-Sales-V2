@@ -27,8 +27,31 @@
                             <button class="btn btn-primary btn-lg" onclick="showLoginMethod('phone')">
                                 <i class="bi bi-phone me-2"></i>Login with Phone Number
                             </button>
-                            <button class="btn btn-secondary btn-lg" onclick="goBackToCart()">
+                            <button class="btn btn-success btn-lg" onclick="showSignupMethodSelection()">
+                                <i class="bi bi-person-plus me-2"></i>Sign Up
+                            </button>
+                            <button class="btn btn-secondary btn-lg" onclick="proceedAsGuest()">
+                                <i class="bi bi-person me-2"></i>Continue as Guest
+                            </button>
+                            <button class="btn btn-outline-secondary btn-lg" onclick="goBackToCart()">
                                 <i class="bi bi-arrow-left me-2"></i>Back to Cart
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Signup Method Selection -->
+                    <div id="signupMethodSelection" class="login-form" style="display: none;">
+                        <h4 class="mb-3">Sign Up</h4>
+                        <p class="text-muted mb-4">Choose how you want to sign up</p>
+                        <div class="d-grid gap-3">
+                            <button class="btn btn-success btn-lg" onclick="showSignupMethod('email')">
+                                <i class="bi bi-envelope me-2"></i>Sign Up with Email
+                            </button>
+                            <button class="btn btn-success btn-lg" onclick="showSignupMethod('phone')">
+                                <i class="bi bi-phone me-2"></i>Sign Up with Phone Number
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="showLoginMethodSelection()">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Login
                             </button>
                         </div>
                     </div>
@@ -71,6 +94,92 @@
                         </form>
                     </div>
                     
+                    <!-- Email Signup Form -->
+                    <div id="emailSignupForm" class="login-form" style="display: none;">
+                        <h4 class="mb-3">Sign Up with Email</h4>
+                        <form id="emailSignup">
+                            <div class="mb-3">
+                                <label for="signupEmail" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="signupEmail" placeholder="Enter your email address" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-shield-lock me-2"></i>Request OTP
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="showSignupMethodSelection()">
+                                    <i class="bi bi-arrow-left me-2"></i>Back
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Phone Signup Form -->
+                    <div id="phoneSignupForm" class="login-form" style="display: none;">
+                        <h4 class="mb-3">Sign Up with Phone Number</h4>
+                        <form id="phoneSignup">
+                            <div class="mb-3">
+                                <label for="signupPhone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="signupPhone" placeholder="+60 12-3456789" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-shield-lock me-2"></i>Request OTP
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="showSignupMethodSelection()">
+                                    <i class="bi bi-arrow-left me-2"></i>Back
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Signup Basic Info Form -->
+                    <div id="signupBasicInfoForm" class="login-form" style="display: none;">
+                        <h4 class="mb-3">Complete Your Profile</h4>
+                        <p class="text-muted mb-4">Please provide your basic information</p>
+                        <form id="nameICForm">
+                            <div class="mb-3">
+                                <label for="signupFullName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="signupFullName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="signupICNumber" class="form-label">IC Number</label>
+                                <input type="text" class="form-control" id="signupICNumber" placeholder="XXXXXX-XX-XXXX" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Verified Contact</label>
+                                <input type="text" class="form-control" id="verifiedContactInfo" readonly>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>Continue
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="showSignupMethodSelection()">
+                                    <i class="bi bi-arrow-left me-2"></i>Back
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Secondary Contact Form -->
+                    <div id="secondaryContactForm" class="login-form" style="display: none;">
+                        <h4 class="mb-3">Add Secondary Contact</h4>
+                        <p class="text-muted mb-4" id="secondaryContactPrompt">Please provide your secondary contact information</p>
+                        <form id="secondaryContactFormElement">
+                            <div class="mb-3">
+                                <label for="secondaryContact" class="form-label" id="secondaryContactLabel">Contact Information</label>
+                                <input type="text" class="form-control" id="secondaryContact" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-shield-lock me-2"></i>Request OTP
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="goBackToNameIC()">
+                                    <i class="bi bi-arrow-left me-2"></i>Back
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
                     <!-- OTP Verification Form -->
                     <div id="otpForm" class="login-form" style="display: none;">
                         <h4 class="mb-3">Enter OTP</h4>
@@ -87,6 +196,7 @@
                                     <input type="text" class="form-control otp-digit" maxlength="1" required>
                                 </div>
                             </div>
+                            <div>Hint: 123456</div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-success btn-lg">
                                     <i class="bi bi-check-circle me-2"></i>Verify & Continue

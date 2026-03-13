@@ -58,6 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'login':
             setupLoginPage();
             break;
+        case 'customer-info':
+            setupCustomerForm();
+            break;
         case 'payment':
             updateOrderSummary();
             break;
@@ -103,14 +106,6 @@ function navigateToPayment() {
 
 function goBackToProducts() {
     navigateToPage('products.html');
-}
-
-function resetToHome() {
-    // Clear all session data
-    sessionStorage.clear();
-    cart = [];
-    customerData = {};
-    navigateToPage('home.html');
 }
 
 // Product management functions
@@ -251,6 +246,11 @@ function addToCartFromDetails() {
     selectedQuantity = 1;
     selectedVariation = null;
     document.getElementById('quantityDisplay').textContent = '1';
+    
+    // Navigate back to products page
+    setTimeout(() => {
+        navigateToPage('products.html');
+    }, 1000);
 }
 
 function updateProductsPageCartTotal() {
@@ -284,14 +284,40 @@ function setupLoginPage() {
     document.getElementById('emailLogin').addEventListener('submit', function(e) {
         e.preventDefault();
         const email = document.getElementById('email').value;
-        requestOTP('email', email);
+        requestOTP('email', email, false); // false = not signup
     });
     
     // Setup phone login form
     document.getElementById('phoneLogin').addEventListener('submit', function(e) {
         e.preventDefault();
         const phone = document.getElementById('phoneNumber').value;
-        requestOTP('phone', phone);
+        requestOTP('phone', phone, false); // false = not signup
+    });
+    
+    // Setup email signup form
+    document.getElementById('emailSignup').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('signupEmail').value;
+        requestOTP('email', email, true); // true = signup
+    });
+    
+    // Setup phone signup form
+    document.getElementById('phoneSignup').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const phone = document.getElementById('signupPhone').value;
+        requestOTP('phone', phone, true); // true = signup
+    });
+    
+    // Setup name and IC form
+    document.getElementById('nameICForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        handleNameICSubmission();
+    });
+    
+    // Setup secondary contact form
+    document.getElementById('secondaryContactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        requestSecondaryOTP();
     });
     
     // Setup OTP verification form
@@ -306,14 +332,24 @@ function setupLoginPage() {
 
 let currentLoginMethod = '';
 let currentLoginValue = '';
+let isSignupFlow = false;
+let signupStep = 0; // 0: initial, 1: name/IC, 2: secondary contact, 3: complete
+let primaryContactVerified = false;
+let signupData = {};
 
 function showLoginMethod(method) {
     currentLoginMethod = method;
+    isSignupFlow = false;
     
     // Hide all forms
     document.getElementById('loginMethodSelection').style.display = 'none';
+    document.getElementById('signupMethodSelection').style.display = 'none';
     document.getElementById('emailLoginForm').style.display = 'none';
     document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('emailSignupForm').style.display = 'none';
+    document.getElementById('phoneSignupForm').style.display = 'none';
+    document.getElementById('signupBasicInfoForm').style.display = 'none';
+    document.getElementById('secondaryContactForm').style.display = 'none';
     document.getElementById('otpForm').style.display = 'none';
     
     // Show selected form
@@ -324,24 +360,87 @@ function showLoginMethod(method) {
     }
 }
 
-function showLoginMethodSelection() {
+function showSignupMethodSelection() {
     // Hide all forms
-    document.getElementById('loginMethodSelection').style.display = 'block';
+    document.getElementById('loginMethodSelection').style.display = 'none';
+    document.getElementById('signupMethodSelection').style.display = 'block';
     document.getElementById('emailLoginForm').style.display = 'none';
     document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('emailSignupForm').style.display = 'none';
+    document.getElementById('phoneSignupForm').style.display = 'none';
+    document.getElementById('signupBasicInfoForm').style.display = 'none';
+    document.getElementById('secondaryContactForm').style.display = 'none';
     document.getElementById('otpForm').style.display = 'none';
 }
 
-function requestOTP(method, value) {
-    currentLoginValue = value;
+function showSignupMethod(method) {
+    currentLoginMethod = method;
+    isSignupFlow = true;
+    signupStep = 0;
+    primaryContactVerified = false;
+    signupData = {};
     
-    // Simulate OTP request (in real app, this would call backend)
-    showNotification(`OTP sent to your ${method}`, 'success');
-    
-    // Show OTP form
+    // Hide all forms
     document.getElementById('loginMethodSelection').style.display = 'none';
+    document.getElementById('signupMethodSelection').style.display = 'none';
     document.getElementById('emailLoginForm').style.display = 'none';
     document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('emailSignupForm').style.display = 'none';
+    document.getElementById('phoneSignupForm').style.display = 'none';
+    document.getElementById('signupBasicInfoForm').style.display = 'none';
+    document.getElementById('secondaryContactForm').style.display = 'none';
+    document.getElementById('otpForm').style.display = 'none';
+    
+    // Show selected form
+    if (method === 'email') {
+        document.getElementById('emailSignupForm').style.display = 'block';
+    } else if (method === 'phone') {
+        document.getElementById('phoneSignupForm').style.display = 'block';
+    }
+}
+
+function showLoginMethodSelection() {
+    // Hide all forms
+    document.getElementById('loginMethodSelection').style.display = 'block';
+    document.getElementById('signupMethodSelection').style.display = 'none';
+    document.getElementById('emailLoginForm').style.display = 'none';
+    document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('emailSignupForm').style.display = 'none';
+    document.getElementById('phoneSignupForm').style.display = 'none';
+    document.getElementById('signupBasicInfoForm').style.display = 'none';
+    document.getElementById('secondaryContactForm').style.display = 'none';
+    document.getElementById('otpForm').style.display = 'none';
+}
+
+function requestOTP(method, value, isSignup) {
+    currentLoginValue = value;
+    isSignupFlow = isSignup;
+    
+    // Simulate OTP request (in real app, this would call backend)
+    const action = isSignup ? 'Sign up' : 'Login';
+    showNotification(`${action} OTP sent to your ${method}`, 'success');
+    
+    if (isSignup) {
+        // For signup, show OTP form directly for initial contact verification
+        showOTPForm(method, value);
+    } else {
+        // For login, show OTP form directly
+        showOTPForm(method, value);
+    }
+}
+
+function showOTPForm(method, value) {
+    // Hide all forms
+    document.getElementById('loginMethodSelection').style.display = 'none';
+    document.getElementById('signupMethodSelection').style.display = 'none';
+    document.getElementById('emailLoginForm').style.display = 'none';
+    document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('emailSignupForm').style.display = 'none';
+    document.getElementById('phoneSignupForm').style.display = 'none';
+    document.getElementById('signupBasicInfoForm').style.display = 'none';
+    document.getElementById('secondaryContactForm').style.display = 'none';
+    
+    // Show OTP form
     document.getElementById('otpForm').style.display = 'block';
     
     // Update OTP target text
@@ -350,6 +449,98 @@ function requestOTP(method, value) {
     // Clear OTP inputs
     document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
     document.querySelector('.otp-digit').focus();
+}
+
+function showNameICForm() {
+    // Hide all forms
+    document.getElementById('loginMethodSelection').style.display = 'none';
+    document.getElementById('signupMethodSelection').style.display = 'none';
+    document.getElementById('emailLoginForm').style.display = 'none';
+    document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('emailSignupForm').style.display = 'none';
+    document.getElementById('phoneSignupForm').style.display = 'none';
+    document.getElementById('otpForm').style.display = 'none';
+    document.getElementById('secondaryContactForm').style.display = 'none';
+    
+    // Show name/IC form
+    document.getElementById('signupBasicInfoForm').style.display = 'block';
+    
+    // Pre-fill verified contact info
+    document.getElementById('verifiedContactInfo').value = currentLoginMethod === 'email' ? 
+        `Email: ${currentLoginValue}` : `Phone: ${currentLoginValue}`;
+}
+
+function handleNameICSubmission() {
+    const fullName = document.getElementById('signupFullName').value;
+    const icNumber = document.getElementById('signupICNumber').value;
+    
+    // Store signup data with consistent keys
+    signupData.name = fullName;
+    signupData.icNumber = icNumber;
+    
+    // Store primary contact with consistent keys
+    if (currentLoginMethod === 'email') {
+        signupData.email = currentLoginValue;
+    } else if (currentLoginMethod === 'phone') {
+        signupData.phone = currentLoginValue;
+    }
+    
+    // Debug: Check data after name/IC submission
+    console.log('After name/IC submission:', signupData);
+    
+    // Show secondary contact form
+    showSecondaryContactForm();
+}
+
+function showSecondaryContactForm() {
+    // Hide all forms
+    document.getElementById('loginMethodSelection').style.display = 'none';
+    document.getElementById('signupMethodSelection').style.display = 'none';
+    document.getElementById('emailLoginForm').style.display = 'none';
+    document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('emailSignupForm').style.display = 'none';
+    document.getElementById('phoneSignupForm').style.display = 'none';
+    document.getElementById('signupBasicInfoForm').style.display = 'none';
+    document.getElementById('otpForm').style.display = 'none';
+    
+    // Show secondary contact form
+    document.getElementById('secondaryContactForm').style.display = 'block';
+    
+    // Set up secondary contact prompt and label
+    if (currentLoginMethod === 'email') {
+        document.getElementById('secondaryContactPrompt').textContent = 'Please provide your phone number';
+        document.getElementById('secondaryContactLabel').textContent = 'Phone Number';
+        document.getElementById('secondaryContact').placeholder = '+60 12-3456789';
+        document.getElementById('secondaryContact').type = 'tel';
+    } else {
+        document.getElementById('secondaryContactPrompt').textContent = 'Please provide your email address';
+        document.getElementById('secondaryContactLabel').textContent = 'Email Address';
+        document.getElementById('secondaryContact').placeholder = 'Enter your email address';
+        document.getElementById('secondaryContact').type = 'email';
+    }
+}
+
+function goBackToNameIC() {
+    showNameICForm();
+}
+
+function requestSecondaryOTP() {
+    const secondaryContact = document.getElementById('secondaryContact').value;
+    const secondaryMethod = currentLoginMethod === 'email' ? 'phone' : 'email';
+    
+    // Store secondary contact with consistent keys
+    if (secondaryMethod === 'email') {
+        signupData.email = secondaryContact;
+    } else if (secondaryMethod === 'phone') {
+        signupData.phone = secondaryContact;
+    }
+    
+    // Debug: Check data after secondary contact
+    console.log('After secondary contact:', signupData);
+    
+    // Request OTP for secondary contact
+    showNotification(`OTP sent to your ${secondaryMethod}`, 'success');
+    showOTPForm(secondaryMethod, secondaryContact);
 }
 
 function setupOTPInputs() {
@@ -394,6 +585,21 @@ function setupOTPInputs() {
     });
 }
 
+function handleSignupBasicInfo() {
+    const fullName = document.getElementById('signupFullName').value;
+    const icNumber = document.getElementById('signupICNumber').value;
+    
+    // Store signup data
+    sessionStorage.setItem('signupData', JSON.stringify({
+        name: fullName,
+        icNumber: icNumber,
+        [currentLoginMethod]: currentLoginValue
+    }));
+    
+    // Show OTP form for verification
+    showOTPForm(currentLoginMethod, currentLoginValue);
+}
+
 function verifyOTP() {
     const otpInputs = document.querySelectorAll('.otp-digit');
     const otpCode = Array.from(otpInputs).map(input => input.value).join('');
@@ -405,21 +611,70 @@ function verifyOTP() {
     
     // Simulate OTP verification (in real app, this would verify with backend)
     if (otpCode === '123456') { // Demo OTP
-        showNotification('OTP verified successfully!', 'success');
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('loginMethod', currentLoginMethod);
-        sessionStorage.setItem('loginValue', currentLoginValue);
-        
-        // Navigate to customer info page
-        setTimeout(() => {
-            navigateToPage('customer-info.html');
-        }, 1000);
+        if (isSignupFlow) {
+            if (!primaryContactVerified) {
+                // First OTP verification - primary contact verified
+                primaryContactVerified = true;
+                showNotification('Primary contact verified! Please provide your basic information.', 'success');
+                setTimeout(() => {
+                    showNameICForm();
+                }, 1000);
+            } else {
+                // Second OTP verification - secondary contact verified, signup complete
+                showNotification('Sign up successful!', 'success');
+                
+                // Debug: Check signup data before storing
+                console.log('Storing signup data:', signupData);
+                
+                // Store complete signup data
+                sessionStorage.setItem('signupData', JSON.stringify(signupData));
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('loginMethod', currentLoginMethod);
+                sessionStorage.setItem('loginValue', currentLoginValue);
+                sessionStorage.removeItem('isGuest'); // Clear guest flag
+                
+                // Debug: Verify it was stored
+                console.log('Stored signupData:', sessionStorage.getItem('signupData'));
+                
+                // Navigate to customer info page
+                setTimeout(() => {
+                    navigateToPage('customer-info.html');
+                }, 1000);
+            }
+        } else {
+            // Login flow
+            showNotification('Login successful!', 'success');
+            
+            // Store login data
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('loginMethod', currentLoginMethod);
+            sessionStorage.setItem('loginValue', currentLoginValue);
+            sessionStorage.removeItem('isGuest'); // Clear guest flag
+            
+            // Navigate to customer info page
+            setTimeout(() => {
+                navigateToPage('customer-info.html');
+            }, 1000);
+        }
     } else {
         showNotification('Invalid OTP. Please try again.', 'danger');
         // Clear OTP inputs
         otpInputs.forEach(input => input.value = '');
         document.querySelector('.otp-digit').focus();
     }
+}
+
+function proceedAsGuest() {
+    // Set guest mode
+    sessionStorage.setItem('isGuest', 'true');
+    sessionStorage.setItem('isLoggedIn', 'false');
+    
+    showNotification('Continuing as guest', 'info');
+    
+    // Navigate directly to customer info page
+    setTimeout(() => {
+        navigateToPage('customer-info.html');
+    }, 1000);
 }
 
 function resendOTP() {
@@ -436,17 +691,67 @@ function setupCustomerForm() {
     const orderType = sessionStorage.getItem('orderType') || 'Pickup';
     document.getElementById('orderType').value = orderType.charAt(0).toUpperCase() + orderType.slice(1);
     
-    // Pre-fill login information if logged in
+    // Debug: Check what's in sessionStorage
+    console.log('SessionStorage Debug:');
+    console.log('isLoggedIn:', sessionStorage.getItem('isLoggedIn'));
+    console.log('isGuest:', sessionStorage.getItem('isGuest'));
+    console.log('loginMethod:', sessionStorage.getItem('loginMethod'));
+    console.log('loginValue:', sessionStorage.getItem('loginValue'));
+    console.log('signupData:', sessionStorage.getItem('signupData'));
+    
+    // Check user status
     const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+    const isGuest = sessionStorage.getItem('isGuest') === 'true';
     const loginMethod = sessionStorage.getItem('loginMethod');
     const loginValue = sessionStorage.getItem('loginValue');
+    const signupData = sessionStorage.getItem('signupData');
     
-    if (isLoggedIn && loginMethod && loginValue) {
+    // Update user status display
+    const userStatusElement = document.getElementById('userStatus');
+    const userStatusText = document.getElementById('userStatusText');
+    const existingCustomerInfo = document.getElementById('existingCustomerInfo');
+    const editCustomerInfo = document.getElementById('editCustomerInfo');
+    
+    if (isGuest) {
+        userStatusElement.className = 'alert alert-warning mb-4';
+        userStatusText.textContent = 'You are continuing as Guest';
+        existingCustomerInfo.style.display = 'none';
+        editCustomerInfo.style.display = 'block';
+    } else if (isLoggedIn && signupData) {
+        const data = JSON.parse(signupData);
+        console.log('Parsed signup data:', data); // Debug log
+        
+        userStatusElement.className = 'alert alert-success mb-4';
+        userStatusText.textContent = `Welcome back! Logged in via ${loginMethod}`;
+        
+        // Show the edit form for all users (including signed up users)
+        existingCustomerInfo.style.display = 'none';
+        editCustomerInfo.style.display = 'block';
+        
+        // Pre-fill form fields with signup data
+        document.getElementById('customerName').value = data.name || '';
+        document.getElementById('customerPhone').value = data.phone || '';
+        document.getElementById('customerEmail').value = data.email || '';
+        document.getElementById('customerAddress').value = '';
+        document.getElementById('deliveryAddress').value = '';
+        
+    } else if (isLoggedIn) {
+        userStatusElement.className = 'alert alert-success mb-4';
+        userStatusText.textContent = `Logged in via ${loginMethod}`;
+        existingCustomerInfo.style.display = 'none';
+        editCustomerInfo.style.display = 'block';
+        
+        // Pre-fill login information
         if (loginMethod === 'email') {
             document.getElementById('customerEmail').value = loginValue;
         } else if (loginMethod === 'phone') {
             document.getElementById('customerPhone').value = loginValue;
         }
+    } else {
+        userStatusElement.className = 'alert alert-info mb-4';
+        userStatusText.textContent = 'Please provide your information';
+        existingCustomerInfo.style.display = 'none';
+        editCustomerInfo.style.display = 'block';
     }
     
     document.getElementById('customerForm').addEventListener('submit', function(e) {
@@ -462,8 +767,88 @@ function setupCustomerForm() {
         };
         
         sessionStorage.setItem('customerData', JSON.stringify(customerData));
-        navigateToPayment();
+        
+        // For guest flow, go directly to SO number display
+        if (isGuest) {
+            showOrderConfirmation();
+        } else {
+            navigateToPayment();
+        }
     });
+}
+
+function addNewAddress() {
+    const address = prompt('Enter new address:');
+    if (address) {
+        const addressList = document.getElementById('addressList');
+        const addressDiv = document.createElement('div');
+        addressDiv.className = 'form-check mb-2';
+        addressDiv.innerHTML = `
+            <input class="form-check-input" type="radio" name="address" id="address${Date.now()}" value="${address}">
+            <label class="form-check-label" for="address${Date.now()}">
+                ${address}
+            </label>
+        `;
+        addressList.appendChild(addressDiv);
+    }
+}
+
+function skipAddress() {
+    document.getElementById('customerAddress').value = '';
+    document.getElementById('deliveryAddress').value = '';
+    showNotification('Address skipped', 'info');
+}
+
+function showOrderConfirmation() {
+    // Generate SO number
+    const soNumber = 'SO' + Date.now().toString().slice(-8);
+    
+    // Create confirmation modal
+    const modalHtml = `
+        <div class="modal fade" id="orderConfirmationModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Order Confirmation</h5>
+                    </div>
+                    <div class="modal-body text-center">
+                        <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">Order Placed Successfully!</h4>
+                        <p class="lead">Your SO Number: <strong>${soNumber}</strong></p>
+                        <p>Please proceed to the payment counter to complete your order.</p>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Show this SO number at the payment counter
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="printOrder('${soNumber}')">
+                            <i class="bi bi-printer me-2"></i>Print Order
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="goToHome()">
+                            <i class="bi bi-house me-2"></i>Back to Home
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page and show it
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+    modal.show();
+    
+    // Store SO number
+    sessionStorage.setItem('currentSO', soNumber);
+}
+
+function goToHome() {
+    // Clear cart and go to home
+    sessionStorage.removeItem('cart');
+    sessionStorage.removeItem('customerData');
+    sessionStorage.removeItem('isGuest');
+    navigateToPage('home.html');
 }
 // Cart management functions
 function updateCartDisplay() {
@@ -669,17 +1054,20 @@ function resetToHome() {
     currentOrderType = '';
     currentCategory = 'all';
     
-    // Reset form
-    document.getElementById('customerForm').reset();
+    // Clear all session data
+    sessionStorage.clear();
     
-    // Update displays
-    updateCartDisplay();
-    loadProducts();
+    // Close modal if it exists
+    const modal = document.getElementById('orderModal');
+    if (modal) {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
     
-    // Close modal and go to home
-    const modal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
-    modal.hide();
-    showPage('homePage');
+    // Navigate to home page
+    navigateToPage('home.html');
 }
 
 // Utility functions
@@ -706,23 +1094,27 @@ function showNotification(message, type = 'info') {
 
 // Keyboard navigation support
 document.addEventListener('keydown', function(e) {
-    // ESC key to go back
-    if (e.key === 'Escape') {
-        const currentPage = document.querySelector('.page.active').id;
-        
-        switch(currentPage) {
-            case 'productsPage':
-                showPage('homePage');
-                break;
-            case 'cartPage':
-                showPage('productsPage');
-                break;
-            case 'customerPage':
-                showCart();
-                break;
-            case 'paymentPage':
-                navigateToCustomerInfo();
-                break;
+    // ESC key to go back - only for single page app (index.html)
+    if (window.location.pathname.includes('index.html')) {
+        if (e.key === 'Escape') {
+            const currentPage = document.querySelector('.page.active');
+            
+            if (currentPage) {
+                switch(currentPage.id) {
+                    case 'productsPage':
+                        showPage('homePage');
+                        break;
+                    case 'cartPage':
+                        showPage('productsPage');
+                        break;
+                    case 'customerPage':
+                        showCart();
+                        break;
+                    case 'paymentPage':
+                        navigateToCustomerInfo();
+                        break;
+                }
+            }
         }
     }
 });

@@ -11,7 +11,45 @@
 <body>
     <div class="container">
         <h2 class="mb-4">Customer Information</h2>
-        <form id="customerForm">
+        
+        <!-- User Status Display -->
+        <div class="alert alert-info mb-4" id="userStatus">
+            <i class="bi bi-info-circle me-2"></i>
+            <span id="userStatusText">Loading...</span>
+        </div>
+        
+        <!-- Existing Customer Info Display -->
+        <div class="card mb-4" id="existingCustomerInfo" style="display: none;">
+            <div class="card-header">
+                <h5 class="mb-0">Your Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <strong>Name:</strong> <span id="displayName"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <strong>IC Number:</strong> <span id="displayICNumber"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <strong>Email:</strong> <span id="displayEmail"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <strong>Phone:</strong> <span id="displayPhone"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <strong>Order Type:</strong> <span id="displayOrderType"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Edit Customer Information -->
+        <div class="card mb-4" id="editCustomerInfo">
+            <div class="card-header">
+                <h5 class="mb-0">Customer Information</h5>
+            </div>
+            <div class="card-body">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="customerName" class="form-label">Full Name</label>
@@ -32,22 +70,44 @@
                     <input type="text" class="form-control" id="orderType" readonly>
                 </div>
             </div>
+            
+            <!-- Address Selection -->
+            <div class="mb-3">
+                <label class="form-label">Delivery Address</label>
+                <div class="mb-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="addNewAddress()">
+                        <i class="bi bi-plus-circle me-1"></i>Add New Address
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="skipAddress()">
+                        <i class="bi bi-skip-forward me-1"></i>Skip Address
+                    </button>
+                </div>
+                <div id="addressList">
+                    <!-- Addresses will be dynamically added here -->
+                </div>
+            </div>
+            
             <div class="mb-3">
                 <label for="customerAddress" class="form-label">Address</label>
-                <textarea class="form-control" id="customerAddress" rows="2"></textarea>
+                <textarea class="form-control" id="customerAddress" rows="2" placeholder="Enter your address"></textarea>
             </div>
             <div class="mb-3">
                 <label for="deliveryAddress" class="form-label">Delivery Address (if different)</label>
-                <textarea class="form-control" id="deliveryAddress" rows="2"></textarea>
+                <textarea class="form-control" id="deliveryAddress" rows="2" placeholder="Enter delivery address"></textarea>
             </div>
             <div class="d-flex justify-content-between">
                 <button type="button" class="btn btn-secondary" onclick="showCart()">
                     <i class="bi bi-arrow-left me-2"></i>Back to Cart
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" form="customerForm">
                     Proceed to Payment<i class="bi bi-arrow-right ms-2"></i>
                 </button>
             </div>
+            </div>
+        </div>
+        
+        <form id="customerForm" style="display: none;">
+            <!-- Hidden form for submission -->
         </form>
     </div>
 
