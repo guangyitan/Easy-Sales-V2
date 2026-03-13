@@ -103,6 +103,7 @@ let salesOrders = [
 ];
 
 let currentSalesOrderId = null;
+let currentStatusFilter = 'all';
 
 // Load sales orders on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -119,9 +120,27 @@ function loadSalesOrders() {
     // Clear existing content
     container.innerHTML = '';
     
-    if (salesOrders.length === 0) {
+    // Filter orders by status
+    let filteredOrders = salesOrders;
+    if (currentStatusFilter !== 'all') {
+        filteredOrders = salesOrders.filter(order => order.status === currentStatusFilter);
+    }
+    
+    if (filteredOrders.length === 0) {
         container.style.display = 'none';
         emptyState.style.display = 'block';
+        
+        // Update empty state message based on filter
+        const emptyStateMessage = document.querySelector('#emptyState p.text-muted');
+        const emptyStateTitle = document.querySelector('#emptyState h4');
+        
+        if (currentStatusFilter === 'all') {
+            emptyStateTitle.textContent = 'No Sales Orders';
+            emptyStateMessage.textContent = 'No orders have been placed yet!';
+        } else {
+            emptyStateTitle.textContent = `No ${currentStatusFilter.charAt(0).toUpperCase() + currentStatusFilter.slice(1)} Orders`;
+            emptyStateMessage.textContent = `No orders with ${currentStatusFilter} status found!`;
+        }
         return;
     }
     
@@ -129,7 +148,7 @@ function loadSalesOrders() {
     emptyState.style.display = 'none';
     
     // Create sales order cards
-    salesOrders.forEach(salesOrder => {
+    filteredOrders.forEach(salesOrder => {
         const card = createSalesOrderCard(salesOrder);
         container.appendChild(card);
     });
@@ -554,4 +573,38 @@ function processPayment() {
 function refreshSalesOrders() {
     loadSalesOrders();
     showNotification('Sales orders refreshed', 'info');
+}
+
+function filterByStatus(status) {
+    currentStatusFilter = status;
+    loadSalesOrders();
+    
+    // Update dropdown button text
+    const dropdownButton = document.getElementById('statusFilterDropdown');
+    let filterText = 'Filter Status';
+    
+    switch(status) {
+        case 'all':
+            filterText = 'All Orders';
+            break;
+        case 'unpaid':
+            filterText = 'Unpaid';
+            break;
+        case 'partial':
+            filterText = 'Partial';
+            break;
+        case 'paid':
+            filterText = 'Paid';
+            break;
+    }
+    
+    dropdownButton.innerHTML = `<i class="bi bi-funnel me-2"></i>${filterText}`;
+    
+    // Show notification
+    if (status === 'all') {
+        showNotification('Showing all sales orders', 'info');
+    } else {
+        const orderCount = salesOrders.filter(order => order.status === status).length;
+        showNotification(`Showing ${orderCount} ${status} order${orderCount !== 1 ? 's' : ''}`, 'info');
+    }
 }

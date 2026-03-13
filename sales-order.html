@@ -173,8 +173,22 @@
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 main-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2>Sales Order Management</h2>
+                    <div>
+                        <h2>Sales Order Management</h2>
+                        <p class="text-muted mb-0">Use this page to receive payment from customers</p>
+                    </div>
                     <div class="d-flex gap-2">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="statusFilterDropdown" data-bs-toggle="dropdown">
+                                <i class="bi bi-funnel me-2"></i>Filter Status
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="filterByStatus('all')">All Orders</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByStatus('unpaid')">Unpaid</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByStatus('partial')">Partial</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByStatus('paid')">Paid</a></li>
+                            </ul>
+                        </div>
                         <button class="btn btn-outline-primary" onclick="refreshSalesOrders()">
                             <i class="bi bi-arrow-clockwise me-2"></i>Refresh
                         </button>
