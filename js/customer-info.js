@@ -117,11 +117,11 @@ function setupCustomerForm() {
         
         sessionStorage.setItem('customerData', JSON.stringify(customerData));
         
-        // For guest flow, go directly to SO number display
+        // For guest flow, go directly to payment page
         if (isGuest) {
-            showOrderConfirmation();
-        } else {
             navigateToPayment();
+        } else {
+            showOrderConfirmation();
         }
     });
 }
