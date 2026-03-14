@@ -27,13 +27,38 @@
             
             <div class="col-md-6">
                 <h2 id="productName"></h2>
+                <div id="pwpIndicator" style="display: none;">
+                    <span class="badge bg-warning text-dark fs-6">PWP Available</span>
+                </div>
                 <h3 class="text-success" id="productPrice"></h3>
+                <div id="pwpPriceSection" style="display: none;">
+                    <h4 class="text-warning">
+                        <i class="bi bi-tag me-2"></i>PWP Price: <span id="pwpPrice"></span>
+                    </h4>
+                </div>
                 <p class="text-muted" id="productDescription"></p>
                 
                 <div class="mb-4">
                     <h5>Variations</h5>
                     <div id="productVariations" class="variation-options">
                         <!-- Variations will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <div class="mb-4" id="pwpOptionSection" style="display: none;">
+                    <h5>Pricing Option</h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="pricingOption" id="regularPrice" value="regular" checked>
+                        <label class="form-check-label" for="regularPrice">
+                            <strong>Regular Price:</strong> RM <span id="regularPriceDisplay"></span>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="pricingOption" id="pwpPriceOption" value="pwp">
+                        <label class="form-check-label" for="pwpPriceOption">
+                            <strong>PWP Price:</strong> RM <span id="pwpPriceDisplay"></span>
+                            <small class="text-success ms-2">(Purchase with Purchase)</small>
+                        </label>
                     </div>
                 </div>
                 

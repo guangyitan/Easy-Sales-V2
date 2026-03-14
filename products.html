@@ -1,59 +1,121 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Self-Service Ordering Kiosk - Products</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
     <link rel="stylesheet" href="styles.css">
+
 </head>
+
 <body>
+
     <div class="container-fluid h-100">
+
         <div class="row h-100">
+
             <!-- Category Sidebar -->
+
             <div class="col-md-3 col-lg-2 category-sidebar">
+
                 <h5 class="mb-3">Categories</h5>
+
                 <div class="list-group" id="categoryList">
+
                     <button class="list-group-item list-group-item-action category-btn active" onclick="filterProducts('all')">
+
                         All Products
+
+                    </button>
+                    <button class="list-group-item list-group-item-action category-btn" onclick="filterProducts('pwp')">
+
+                        <i class="bi bi-tag-fill me-2"></i>PWP Products
+
                     </button>
                     <button class="list-group-item list-group-item-action category-btn" onclick="filterProducts('roof')">
+
                         Roof
+
                     </button>
+
                     <button class="list-group-item list-group-item-action category-btn" onclick="filterProducts('precast-drain')">
+
                         Precast Drain
+
                     </button>
+
                     <button class="list-group-item list-group-item-action category-btn" onclick="filterProducts('pipe-culvert')">
+
                         Pipe Culvert
+
                     </button>
+
                     <button class="list-group-item list-group-item-action category-btn" onclick="filterProducts('precast-post')">
+
                         Precast Post
+
                     </button>
                 </div>
+
             </div>
+
             
+
             <!-- Products Grid -->
+
             <div class="col-md-9 col-lg-10 d-flex flex-column">
+
                 <h2 class="mb-3">Products</h2>
+
                 <div class="row g-3" id="productsGrid">
+
                     <!-- Products will be dynamically added here -->
+
                 </div>
+
                 
+
                 <!-- Fixed Cart Button at Bottom -->
+
                 <div class="cart-fab-container">
+
                     <button class="btn btn-primary btn-lg cart-fab" onclick="showCart()">
+
                         <i class="bi bi-cart3 me-2"></i>View Cart
+
                         <span class="badge bg-danger" id="cartCount">0</span>
+
                         <div class="cart-total">RM <span id="cartTotal">0.00</span></div>
+
                     </button>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
 
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="js/common.js"></script>
+
     <script src="js/products.js"></script>
+
 </body>
+
 </html>
+

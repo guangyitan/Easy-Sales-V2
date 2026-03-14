@@ -3,6 +3,7 @@
 // Product details page variables
 let selectedVariation = null;
 let selectedQuantity = 1;
+let selectedPricingOption = 'regular'; // 'regular' or 'pwp'
 
 // Product details page functions
 function loadProductDetails() {
@@ -17,8 +18,36 @@ function loadProductDetails() {
     document.getElementById('productDescription').textContent = product.description;
     document.getElementById('productPrice').textContent = `RM ${product.price.toFixed(2)}`;
     
+    // Show/hide PWP indicator and options
+    const pwpIndicator = document.getElementById('pwpIndicator');
+    const pwpPriceSection = document.getElementById('pwpPriceSection');
+    const pwpOptionSection = document.getElementById('pwpOptionSection');
+    
+    if (product.pwp === true) {
+        pwpIndicator.style.display = 'block';
+        pwpPriceSection.style.display = 'block';
+        pwpOptionSection.style.display = 'block';
+        
+        // Update PWP price displays
+        document.getElementById('pwpPrice').textContent = `RM ${product.pwpPrice.toFixed(2)}`;
+        document.getElementById('regularPriceDisplay').textContent = product.price.toFixed(2);
+        document.getElementById('pwpPriceDisplay').textContent = product.pwpPrice.toFixed(2);
+        
+        // Add event listeners for pricing options
+        document.getElementById('regularPrice').addEventListener('change', () => {
+            selectedPricingOption = 'regular';
+        });
+        document.getElementById('pwpPriceOption').addEventListener('change', () => {
+            selectedPricingOption = 'pwp';
+        });
+    } else {
+        pwpIndicator.style.display = 'none';
+        pwpPriceSection.style.display = 'none';
+        pwpOptionSection.style.display = 'none';
+    }
+    
     // Load variations
-    const variationsContainer = document.getElementById('variationsContainer');
+    const variationsContainer = document.getElementById('productVariations');
     variationsContainer.innerHTML = '';
     
     product.variations.forEach(variation => {
@@ -66,17 +95,33 @@ function addToCartFromDetails() {
     // Use first variation if none selected
     const variation = selectedVariation || product.variations[0];
     
+    // Determine price based on PWP selection
+    let itemPrice = product.price;
+    let isPWP = false;
+    
+    if (product.pwp === true && selectedPricingOption === 'pwp') {
+        itemPrice = product.pwpPrice;
+        isPWP = true;
+    }
+    
     const cartItem = {
         id: product.id,
         name: product.name,
-        price: product.price,
+        price: itemPrice,
         image: product.image,
         variation: variation,
-        quantity: selectedQuantity
+        quantity: selectedQuantity,
+        isPWP: isPWP,
+        regularPrice: product.price,
+        pwpPrice: product.pwpPrice
     };
     
-    // Check if item with same variation already exists
-    const existingItem = cart.find(item => item.id === product.id && item.variation === variation);
+    // Check if item with same variation and pricing option already exists
+    const existingItem = cart.find(item => 
+        item.id === product.id && 
+        item.variation === variation && 
+        item.isPWP === isPWP
+    );
     
     if (existingItem) {
         existingItem.quantity += selectedQuantity;
@@ -85,11 +130,14 @@ function addToCartFromDetails() {
     }
     
     saveCartToStorage();
-    showNotification(`${product.name} (${variation}) added to cart!`, 'success');
+    
+    const pricingText = isPWP ? ' (PWP Price)' : '';
+    showNotification(`${product.name} (${variation})${pricingText} added to cart!`, 'success');
     
     // Reset selection
     selectedQuantity = 1;
     selectedVariation = null;
+    selectedPricingOption = 'regular';
     document.getElementById('quantityDisplay').textContent = '1';
     
     // Navigate back to products page

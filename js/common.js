@@ -4,22 +4,21 @@
 const products = [
     
     // Roof
-    { id: 17, name: 'Genting Konkrit Contour', price: 45.99, category: 'roof', image: 'images/roof/genting-konkrit-contour.png', description: 'High-quality Genting concrete contour for roofing', variations: ['Standard', 'Premium', 'Quick Set'] },
-    { id: 18, name: 'Perabung Saga Ridge Tiles', price: 89.99, category: 'roof', image: 'images/roof/perabung-saga-ridge-tiles.png', description: 'Durable ridge tiles for roofing', variations: ['Red', 'Brown', 'Gray'] },
-    { id: 19, name: 'Sudut Hip Starter', price: 125.99, category: 'roof', image: 'images/roof/sudut-hip-starter.png', description: 'Hip starter components for roofing system', variations: ['Basic', 'Deluxe', 'Premium'] },
+    { id: 17, name: 'Genting Konkrit Contour', price: 45.99, category: 'roof', image: 'images/roof/genting-konkrit-contour.png', description: 'High-quality Genting concrete contour for roofing', variations: ['Standard', 'Premium', 'Quick Set'], pwp: true, pwpPrice: 35.99 },
+    { id: 18, name: 'Perabung Saga Ridge Tiles', price: 89.99, category: 'roof', image: 'images/roof/perabung-saga-ridge-tiles.png', description: 'Durable ridge tiles for roofing', variations: ['Red', 'Brown', 'Gray'], pwp: false, pwpPrice: null },
+    { id: 19, name: 'Sudut Hip Starter', price: 125.99, category: 'roof', image: 'images/roof/sudut-hip-starter.png', description: 'Hip starter components for roofing system', variations: ['Basic', 'Deluxe', 'Premium'], pwp: true, pwpPrice: 99.99 },
     
     // Precast Drain
-    { id: 20, name: 'U-Drain 300x300mm', price: 35.99, category: 'precast-drain', image: 'images/precast-drain/u-drain-300x300mm.png', description: 'U-channel drainage system without DWf', variations: ['300mm', '450mm', '600mm'] },
-    { id: 21, name: 'UDrain 375x375mm', price: 42.99, category: 'precast-drain', image: 'images/precast-drain/u-drain-375x375mm.png', description: 'U-channel drainage with outlet', variations: ['375mm', '450mm', '600mm'] },
+    { id: 20, name: 'U-Drain 300x300mm', price: 35.99, category: 'precast-drain', image: 'images/precast-drain/u-drain-300x300mm.png', description: 'U-channel drainage system without DWf', variations: ['300mm', '450mm', '600mm'], pwp: false, pwpPrice: null },
+    { id: 21, name: 'UDrain 375x375mm', price: 42.99, category: 'precast-drain', image: 'images/precast-drain/u-drain-375x375mm.png', description: 'U-channel drainage with outlet', variations: ['375mm', '450mm', '600mm'], pwp: true, pwpPrice: 32.99 },
     
     // Pipe Culvert
-    { id: 22, name: 'Permentong 3x3', price: 89.99, category: 'pipe-culvert', image: 'images/pipe-culvert/permentong-3x3.png', description: 'Permentong class B concrete pipes', variations: ['3m', '6m', '9m'] },
-    { id: 23, name: 'Penutup Permentong 3x3', price: 95.99, category: 'pipe-culvert', image: 'images/pipe-culvert/penutup-permentong-3x3.png', description: 'Penutup class B concrete pipes', variations: ['3m', '6m', '9m'] },
+    { id: 22, name: 'Permentong 3x3', price: 89.99, category: 'pipe-culvert', image: 'images/pipe-culvert/permentong-3x3.png', description: 'Permentong class B concrete pipes', variations: ['3m', '6m', '9m'], pwp: true, pwpPrice: 75.99 },
+    { id: 23, name: 'Penutup Permentong 3x3', price: 95.99, category: 'pipe-culvert', image: 'images/pipe-culvert/penutup-permentong-3x3.png', description: 'Penutup class B concrete pipes', variations: ['3m', '6m', '9m'], pwp: false, pwpPrice: null },
     
     // Precast Post
-    { id: 24, name: 'Tiang Pagar Simen 3x3', price: 75.99, category: 'precast-post', image: 'images/precast-post/tiang-pagar-simen-3x3.png', description: 'Reinforced concrete posts for fencing', variations: ['3m', '4m', '5m'] },
-    { id: 25, name: 'Tiang Pagar Simen 4x4', price: 125.99, category: 'precast-post', image: 'images/precast-post/tiang-pagar-simen-4x4.png', description: 'Heavy-duty concrete posts for security', variations: ['4m', '5m', '6m'] },
-    
+    { id: 24, name: 'Tiang Pagar Simen 3x3', price: 75.99, category: 'precast-post', image: 'images/precast-post/tiang-pagar-simen-3x3.png', description: 'Reinforced concrete posts for fencing', variations: ['3m', '4m', '5m'], pwp: true, pwpPrice: 65.99 },
+    { id: 25, name: 'Tiang Pagar Simen 4x4', price: 125.99, category: 'precast-post', image: 'images/precast-post/tiang-pagar-simen-4x4.png', description: 'Heavy-duty concrete posts for security', variations: ['4m', '5m', '6m'], pwp: false, pwpPrice: null },
     
 ];
 
@@ -70,8 +69,8 @@ function navigateToLogin() {
             navigateToPage('select-po-branch.html');
         }
     } else {
-        // For regular orders, go to login
-        navigateToPage('login.html');
+        // For regular orders, show PWP upsell page first
+        navigateToPage('pwp.html');
     }
 }
 

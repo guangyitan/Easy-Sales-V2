@@ -5,9 +5,17 @@ function loadProducts() {
     const productsGrid = document.getElementById('productsGrid');
     productsGrid.innerHTML = '';
     
-    const filteredProducts = currentCategory === 'all' 
-        ? products 
-        : products.filter(p => p.category === currentCategory);
+    let filteredProducts;
+    
+    if (currentCategory === 'all') {
+        filteredProducts = products;
+    } else if (currentCategory === 'pwp') {
+        // Filter products that have PWP enabled
+        filteredProducts = products.filter(p => p.pwp === true);
+    } else {
+        // Regular category filtering
+        filteredProducts = products.filter(p => p.category === currentCategory);
+    }
     
     filteredProducts.forEach(product => {
         const productCard = createProductCard(product);
@@ -19,15 +27,22 @@ function createProductCard(product) {
     const col = document.createElement('div');
     col.className = 'col-md-6 col-lg-4 col-xl-3';
     
+    // Check if this product has PWP
+    const hasPWP = product.pwp === true;
+    
     col.innerHTML = `
         <div class="card h-100 product-card" onclick="showProductDetails(${product.id})" style="cursor: pointer;">
             <img src="${product.image}" class="card-img-top" alt="${product.name}">
             <div class="card-body d-flex flex-column">
-                <h5 class="card-title">${product.name}</h5>
+                <h5 class="card-title">
+                    ${product.name}
+                    ${hasPWP ? '<span class="badge bg-warning text-dark ms-2">PWP</span>' : ''}
+                </h5>
                 <p class="card-text text-muted">${product.description}</p>
                 <div class="mt-auto">
                     <h4 class="text-primary">RM ${product.price.toFixed(2)}</h4>
-                    <small class="text-muted">Multiple variations available</small>
+                    ${hasPWP ? `<small class="text-success"><i class="bi bi-tag me-1"></i>PWP Price: RM ${product.pwpPrice.toFixed(2)}</small>` : ''}
+                    <small class="text-muted d-block">Multiple variations available</small>
                 </div>
             </div>
         </div>
