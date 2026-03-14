@@ -179,6 +179,19 @@
                         <p class="text-muted mb-0">Create and manage purchase orders for suppliers</p>
                     </div>
                     <div class="d-flex gap-2">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="branchFilterDropdown" data-bs-toggle="dropdown">
+                                <i class="bi bi-geo-alt me-2"></i>Filter Branch
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="filterByBranch('all')">All Branches</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByBranch('Masjid Tanah')">Masjid Tanah</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByBranch('Semabok')">Semabok</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByBranch('Kandang')">Kandang</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByBranch('Tangga Batu')">Tangga Batu</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByBranch('Merlimau')">Merlimau</a></li>
+                            </ul>
+                        </div>
                         <button class="btn btn-primary btn-create-po" onclick="createPurchaseOrder()">
                             <i class="bi bi-plus-circle me-2"></i>Create PO
                         </button>
@@ -239,9 +252,6 @@
         ];
 
         // Load POs on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadPurchaseOrders();
-        });
 
         function loadPurchaseOrders() {
             const container = document.getElementById('poCardsContainer');
@@ -250,7 +260,15 @@
             // Clear existing content
             container.innerHTML = '';
             
-            if (purchaseOrders.length === 0) {
+            // Filter POs by branch
+            let filteredPOs = purchaseOrders;
+            if (currentBranchFilter !== 'all') {
+                filteredPOs = purchaseOrders.filter(po => 
+                    po.fromBranch === currentBranchFilter || po.toBranch === currentBranchFilter
+                );
+            }
+            
+            if (filteredPOs.length === 0) {
                 container.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
@@ -260,7 +278,7 @@
             emptyState.style.display = 'none';
             
             // Create PO cards
-            purchaseOrders.forEach(po => {
+            filteredPOs.forEach(po => {
                 const card = createPOCard(po);
                 container.appendChild(card);
             });
@@ -270,33 +288,11 @@
             const card = document.createElement('div');
             card.className = 'po-card';
             
-            // Determine status badge
-            let statusBadge = '';
-            let statusClass = '';
-            
-            switch(po.status) {
-                case 'pending':
-                    statusBadge = 'Pending';
-                    statusClass = 'status-pending';
-                    break;
-                case 'approved':
-                    statusBadge = 'Approved';
-                    statusClass = 'status-approved';
-                    break;
-                case 'rejected':
-                    statusBadge = 'Rejected';
-                    statusClass = 'status-rejected';
-                    break;
-                default:
-                    statusBadge = 'Unknown';
-                    statusClass = 'status-pending';
-            }
-            
             card.innerHTML = `
                 <div class="po-card-header">
                     <div class="po-info">
                         <h5 class="po-number">${po.id}</h5>
-                        <span class="status-badge badge ${statusClass}">${statusBadge}</span>
+                        <span class="po-status badge bg-warning text-dark">Pending</span>
                     </div>
                     <div class="po-actions">
                         <button class="btn btn-sm btn-outline-primary" onclick="viewPODetails('${po.id}')">
@@ -305,20 +301,21 @@
                     </div>
                 </div>
                 
-                <div class="po-supplier-info">
-                    <div class="supplier-section">
-                        <h6><i class="bi bi-building me-2"></i>Supplier Information</h6>
-                        <div class="supplier-details">
-                            <p><strong>Name:</strong> ${po.supplierName}</p>
-                            <p><strong>Phone:</strong> ${po.supplierPhone}</p>
-                            <p><strong>Email:</strong> ${po.supplierEmail}</p>
-                            <p><strong>Address:</strong></p>
-                            <p class="address-text">${po.address}</p>
+                <div class="po-branch-info">
+                    <div class="branch-section">
+                        <h6><i class="bi bi-arrow-left-right me-2"></i>Branch Transfer</h6>
+                        <div class="branch-details">
+                            <p><strong>From:</strong> ${po.fromBranch}</p>
+                            <p><strong>To:</strong> ${po.toBranch}</p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="po-summary">
+                    <div class="summary-row">
+                        <span><i class="bi bi-geo-alt me-2"></i>Branch:</span>
+                        <span>${po.fromBranch} → ${po.toBranch}</span>
+                    </div>
                     <div class="summary-row">
                         <span><i class="bi bi-calendar3 me-2"></i>Order Date:</span>
                         <span>${po.orderDate}</span>
@@ -337,6 +334,48 @@
             return card;
         }
 
+        function filterByBranch(branch) {
+            currentBranchFilter = branch;
+            loadPurchaseOrders();
+            
+            // Update dropdown button text
+            const dropdownButton = document.getElementById('branchFilterDropdown');
+            let filterText = 'Filter Branch';
+            
+            switch(branch) {
+                case 'all':
+                    filterText = 'All Branches';
+                    break;
+                case 'Masjid Tanah':
+                    filterText = 'Masjid Tanah';
+                    break;
+                case 'Semabok':
+                    filterText = 'Semabok';
+                    break;
+                case 'Kandang':
+                    filterText = 'Kandang';
+                    break;
+                case 'Tangga Batu':
+                    filterText = 'Tangga Batu';
+                    break;
+                case 'Merlimau':
+                    filterText = 'Merlimau';
+                    break;
+            }
+            
+            dropdownButton.innerHTML = `<i class="bi bi-geo-alt me-2"></i>${filterText}`;
+            
+            // Show notification
+            if (branch === 'all') {
+                showNotification('Showing purchase orders from all branches', 'info');
+            } else {
+                const poCount = purchaseOrders.filter(po => 
+                    po.fromBranch === branch || po.toBranch === branch
+                ).length;
+                showNotification(`Showing ${poCount} PO${poCount !== 1 ? 's' : ''} involving ${branch}`, 'info');
+            }
+        }
+
         function createPurchaseOrder() {
             // Redirect to select-po-branch.html
             window.location.href = 'select-po-branch.html';
@@ -346,6 +385,32 @@
             // For now, just show a simple alert
             alert('PO Details for ' + poId + ' would be shown here');
         }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '300px';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPurchaseOrders();
+        });
     </script>
 </body>
 </html>

@@ -11,6 +11,7 @@ let salesOrders = [
         deliveryAddress: 'No. 123, Jalan Merdeka, Taman Seri Setia, 43000 Kajang',
         orderDate: '2024-03-14',
         orderType: 'Delivery',
+        branch: 'Masjid Tanah',
         items: [
             { name: 'Genting Konkrit Contour', quantity: 2, variation: 'Standard', price: 45.99, image: 'images/roof/genting-konkrit-contour.png' },
             { name: 'U-Drain 300x300mm', quantity: 5, variation: '300mm', price: 35.99, image: 'images/precast-drain/u-drain-300x300mm.png' },
@@ -29,6 +30,7 @@ let salesOrders = [
         deliveryAddress: 'Lot 456, Jalan Industri 2, Kawasan Perindustrian, 47300 Puchong',
         orderDate: '2024-03-14',
         orderType: 'Pickup',
+        branch: 'Semabok',
         items: [
             { name: 'Perabung Saga Ridge Tiles', quantity: 10, variation: 'Red', price: 89.99, image: 'images/roof/perabung-saga-ridge-tiles.png' },
             { name: 'Tiang Pagar Simen 3x3', quantity: 8, variation: '3m', price: 75.99, image: 'images/precast-post/tiang-pagar-simen-3x3.png' },
@@ -50,6 +52,7 @@ let salesOrders = [
         deliveryAddress: 'No. 789, Persiaran Teknologi, Cyberjaya, 63000 Selangor',
         orderDate: '2024-03-14',
         orderType: 'Delivery',
+        branch: 'Kandang',
         items: [
             { name: 'Permentong 3x3', quantity: 3, variation: '3m', price: 89.99, image: 'images/pipe-culvert/permentong-3x3.png' },
             { name: 'Penutup Permentong 3x3', quantity: 3, variation: '3m', price: 95.99, image: 'images/pipe-culvert/penutup-permentong-3x3.png' },
@@ -69,7 +72,8 @@ let salesOrders = [
         address: 'No. 321, Jalan Raya Cheras, 56000 Kuala Lumpur',
         deliveryAddress: 'No. 321, Jalan Raya Cheras, 56000 Kuala Lumpur',
         orderDate: '2024-03-14',
-        orderType: 'Pickup',
+        orderType: 'Delivery',
+        branch: 'Tangga Batu',
         items: [
             { name: 'Sudut Hip Starter', quantity: 6, variation: 'Deluxe', price: 125.99, image: 'images/roof/sudut-hip-starter.png' },
             { name: 'UDrain 375x375mm', quantity: 4, variation: '375mm', price: 42.99, image: 'images/precast-drain/u-drain-375x375mm.png' },
@@ -77,8 +81,10 @@ let salesOrders = [
             { name: 'Perabung Saga Ridge Tiles', quantity: 8, variation: 'Gray', price: 89.99, image: 'images/roof/perabung-saga-ridge-tiles.png' }
         ],
         totalAmount: 1791.85,
-        status: 'unpaid',
-        payments: []
+        status: 'partial',
+        payments: [
+            { amount: 800.00, method: 'Online Transfer', date: '2024-03-14', time: '11:15 AM' }
+        ]
     },
     {
         id: 'SO-20240314005',
@@ -88,7 +94,8 @@ let salesOrders = [
         address: 'No. 654, Jalan Sultan Abdul Samad, 50000 Kuala Lumpur',
         deliveryAddress: 'No. 654, Jalan Sultan Abdul Samad, 50000 Kuala Lumpur',
         orderDate: '2024-03-14',
-        orderType: 'Delivery',
+        orderType: 'Pickup',
+        branch: 'Merlimau',
         items: [
             { name: 'Genting Konkrit Contour', quantity: 4, variation: 'Premium', price: 45.99, image: 'images/roof/genting-konkrit-contour.png' },
             { name: 'Tiang Pagar Simen 4x4', quantity: 6, variation: '4m', price: 125.99, image: 'images/precast-post/tiang-pagar-simen-4x4.png' },
@@ -104,6 +111,7 @@ let salesOrders = [
 
 let currentSalesOrderId = null;
 let currentStatusFilter = 'all';
+let currentBranchFilter = 'all';
 
 // Load sales orders on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -120,10 +128,13 @@ function loadSalesOrders() {
     // Clear existing content
     container.innerHTML = '';
     
-    // Filter orders by status
+    // Filter orders by status and branch
     let filteredOrders = salesOrders;
     if (currentStatusFilter !== 'all') {
-        filteredOrders = salesOrders.filter(order => order.status === currentStatusFilter);
+        filteredOrders = filteredOrders.filter(order => order.status === currentStatusFilter);
+    }
+    if (currentBranchFilter !== 'all') {
+        filteredOrders = filteredOrders.filter(order => order.branch === currentBranchFilter);
     }
     
     if (filteredOrders.length === 0) {
@@ -216,6 +227,10 @@ function createSalesOrderCard(salesOrder) {
         </div>
         
         <div class="sales-order-summary">
+            <div class="summary-row">
+                <span><i class="bi bi-geo-alt me-2"></i>Branch:</span>
+                <span>${salesOrder.branch}</span>
+            </div>
             <div class="summary-row">
                 <span><i class="bi bi-calendar3 me-2"></i>Order Date:</span>
                 <span>${salesOrder.orderDate}</span>
@@ -606,5 +621,46 @@ function filterByStatus(status) {
     } else {
         const orderCount = salesOrders.filter(order => order.status === status).length;
         showNotification(`Showing ${orderCount} ${status} order${orderCount !== 1 ? 's' : ''}`, 'info');
+    }
+}
+
+// Branch filtering function
+function filterByBranch(branch) {
+    currentBranchFilter = branch;
+    loadSalesOrders();
+    
+    // Update dropdown button text
+    const dropdownButton = document.getElementById('branchFilterDropdown');
+    let filterText = 'Filter Branch';
+    
+    switch(branch) {
+        case 'all':
+            filterText = 'All Branches';
+            break;
+        case 'Masjid Tanah':
+            filterText = 'Masjid Tanah';
+            break;
+        case 'Semabok':
+            filterText = 'Semabok';
+            break;
+        case 'Kandang':
+            filterText = 'Kandang';
+            break;
+        case 'Tangga Batu':
+            filterText = 'Tangga Batu';
+            break;
+        case 'Merlimau':
+            filterText = 'Merlimau';
+            break;
+    }
+    
+    dropdownButton.innerHTML = `<i class="bi bi-geo-alt me-2"></i>${filterText}`;
+    
+    // Show notification
+    if (branch === 'all') {
+        showNotification('Showing sales orders from all branches', 'info');
+    } else {
+        const orderCount = salesOrders.filter(order => order.branch === branch).length;
+        showNotification(`Showing ${orderCount} order${orderCount !== 1 ? 's' : ''} from ${branch}`, 'info');
     }
 }

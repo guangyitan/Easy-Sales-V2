@@ -9,6 +9,7 @@ let pendingDeliveries = [
         deliveryAddress: 'No. 123, Jalan Merdeka, Taman Seri Setia, 43000 Kajang',
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-15',
+        branch: 'Masjid Tanah',
         items: [
             { name: 'Genting Konkrit Contour', quantity: 2, variation: 'Standard', price: 45.99, image: 'images/roof/genting-konkrit-contour.png' },
             { name: 'U-Drain 300x300mm', quantity: 5, variation: '300mm', price: 35.99, image: 'images/precast-drain/u-drain-300x300mm.png' },
@@ -25,6 +26,7 @@ let pendingDeliveries = [
         deliveryAddress: 'Lot 456, Jalan Industri 2, Kawasan Perindustrian, 47300 Puchong',
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-16',
+        branch: 'Semabok',
         items: [
             { name: 'Perabung Saga Ridge Tiles', quantity: 10, variation: 'Red', price: 89.99, image: 'images/roof/perabung-saga-ridge-tiles.png' },
             { name: 'Tiang Pagar Simen 3x3', quantity: 8, variation: '3m', price: 75.99, image: 'images/precast-post/tiang-pagar-simen-3x3.png' },
@@ -42,6 +44,7 @@ let pendingDeliveries = [
         deliveryAddress: 'No. 789, Persiaran Teknologi, Cyberjaya, 63000 Selangor',
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-17',
+        branch: 'Kandang',
         items: [
             { name: 'Permentong 3x3', quantity: 3, variation: '3m', price: 89.99, image: 'images/pipe-culvert/permentong-3x3.png' },
             { name: 'Penutup Permentong 3x3', quantity: 3, variation: '3m', price: 95.99, image: 'images/pipe-culvert/penutup-permentong-3x3.png' },
@@ -58,6 +61,7 @@ let pendingDeliveries = [
         deliveryAddress: 'No. 321, Jalan Raya Cheras, 56000 Kuala Lumpur',
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-18',
+        branch: 'Tangga Batu',
         items: [
             { name: 'Sudut Hip Starter', quantity: 6, variation: 'Deluxe', price: 125.99, image: 'images/roof/sudut-hip-starter.png' },
             { name: 'UDrain 375x375mm', quantity: 4, variation: '375mm', price: 42.99, image: 'images/precast-drain/u-drain-375x375mm.png' },
@@ -75,6 +79,7 @@ let pendingDeliveries = [
         deliveryAddress: 'No. 654, Jalan Sultan Abdul Samad, 50000 Kuala Lumpur',
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-19',
+        branch: 'Merlimau',
         items: [
             { name: 'Genting Konkrit Contour', quantity: 4, variation: 'Premium', price: 45.99, image: 'images/roof/genting-konkrit-contour.png' },
             { name: 'Tiang Pagar Simen 4x4', quantity: 6, variation: '4m', price: 125.99, image: 'images/precast-post/tiang-pagar-simen-4x4.png' },
@@ -91,6 +96,7 @@ let pendingDeliveries = [
         deliveryAddress: 'No. 987, Jalan Ampang Hilir, 55000 Kuala Lumpur',
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-20',
+        branch: 'Masjid Tanah',
         items: [
             { name: 'Perabung Saga Ridge Tiles', quantity: 15, variation: 'Brown', price: 89.99, image: 'images/roof/perabung-saga-ridge-tiles.png' },
             { name: 'Permentong 3x3', quantity: 5, variation: '6m', price: 89.99, image: 'images/pipe-culvert/permentong-3x3.png' },
@@ -108,6 +114,7 @@ let pendingDeliveries = [
         deliveryAddress: 'No. 246, Jalan Damansara, 47810 Petaling Jaya',
         orderDate: '2024-03-13',
         deliveryDate: '2024-03-21',
+        branch: 'Semabok',
         items: [
             { name: 'U-Drain 300x300mm', quantity: 8, variation: '450mm', price: 35.99, image: 'images/precast-drain/u-drain-300x300mm.png' },
             { name: 'Sudut Hip Starter', quantity: 4, variation: 'Premium', price: 125.99, image: 'images/roof/sudut-hip-starter.png' },
@@ -122,6 +129,7 @@ let pendingDeliveries = [
 ];
 
 let currentDeliveryId = null;
+let currentBranchFilter = 'all';
 
 // Load pending deliveries on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -138,7 +146,13 @@ function loadPendingDeliveries() {
     // Clear existing content
     container.innerHTML = '';
     
-    if (pendingDeliveries.length === 0) {
+    // Filter deliveries by branch
+    let filteredDeliveries = pendingDeliveries;
+    if (currentBranchFilter !== 'all') {
+        filteredDeliveries = pendingDeliveries.filter(delivery => delivery.branch === currentBranchFilter);
+    }
+    
+    if (filteredDeliveries.length === 0) {
         container.style.display = 'none';
         emptyState.style.display = 'block';
         return;
@@ -148,7 +162,7 @@ function loadPendingDeliveries() {
     emptyState.style.display = 'none';
     
     // Create delivery cards
-    pendingDeliveries.forEach(delivery => {
+    filteredDeliveries.forEach(delivery => {
         const card = createDeliveryCard(delivery);
         container.appendChild(card);
     });
@@ -183,6 +197,10 @@ function createDeliveryCard(delivery) {
         </div>
         
         <div class="delivery-summary">
+            <div class="summary-row">
+                <span><i class="bi bi-geo-alt me-2"></i>Branch:</span>
+                <span>${delivery.branch}</span>
+            </div>
             <div class="summary-row">
                 <span><i class="bi bi-calendar3 me-2"></i>Order Date:</span>
                 <span>${delivery.orderDate}</span>
@@ -777,5 +795,46 @@ function updateSelectionCount() {
     // Show selection count
     if (selectedCount > 0) {
         showNotification(`${selectedCount} item(s) selected`, 'info');
+    }
+}
+
+// Branch filtering function
+function filterByBranch(branch) {
+    currentBranchFilter = branch;
+    loadPendingDeliveries();
+    
+    // Update dropdown button text
+    const dropdownButton = document.getElementById('branchFilterDropdown');
+    let filterText = 'Filter Branch';
+    
+    switch(branch) {
+        case 'all':
+            filterText = 'All Branches';
+            break;
+        case 'Masjid Tanah':
+            filterText = 'Masjid Tanah';
+            break;
+        case 'Semabok':
+            filterText = 'Semabok';
+            break;
+        case 'Kandang':
+            filterText = 'Kandang';
+            break;
+        case 'Tangga Batu':
+            filterText = 'Tangga Batu';
+            break;
+        case 'Merlimau':
+            filterText = 'Merlimau';
+            break;
+    }
+    
+    dropdownButton.innerHTML = `<i class="bi bi-geo-alt me-2"></i>${filterText}`;
+    
+    // Show notification
+    if (branch === 'all') {
+        showNotification('Showing pending deliveries from all branches', 'info');
+    } else {
+        const deliveryCount = pendingDeliveries.filter(delivery => delivery.branch === branch).length;
+        showNotification(`Showing ${deliveryCount} delivery${deliveryCount !== 1 ? 's' : ''} from ${branch}`, 'info');
     }
 }
