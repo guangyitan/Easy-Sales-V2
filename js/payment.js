@@ -27,21 +27,66 @@ function updateOrderSummary() {
 }
 
 function completeOrder() {
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    // Check if this is a PO order
+    const isPOOrder = sessionStorage.getItem('isPOOrder');
+    
+    // For PO orders, set payment method to 'po' (internal transfer)
+    // For regular orders, get selected payment method
+    let paymentMethod;
+    
+    if (isPOOrder && isPOOrder === 'true') {
+        paymentMethod = 'po'; // Internal PO transfer
+    } else {
+        const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!paymentMethodElement) {
+            showNotification('Please select a payment method', 'warning');
+            return;
+        }
+        paymentMethod = paymentMethodElement.value;
+    }
     
     // Store payment method
     customerData.paymentMethod = paymentMethod;
     sessionStorage.setItem('customerData', JSON.stringify(customerData));
     
     // Generate order number
-    const orderNumber = 'ORD' + Date.now().toString().slice(-8);
+    let orderNumber;
+    let orderType;
+    
+    if (isPOOrder && isPOOrder === 'true') {
+        orderNumber = 'PO' + Date.now().toString().slice(-8);
+        orderType = 'Purchase Order';
+    } else {
+        orderNumber = 'ORD' + Date.now().toString().slice(-8);
+        orderType = 'Sales Order';
+    }
+    
     sessionStorage.setItem('orderNumber', orderNumber);
+    sessionStorage.setItem('orderType', orderType);
     
     // Show confirmation modal
     const modal = new bootstrap.Modal(document.getElementById('orderModal'));
     
     // Update modal content
     document.getElementById('orderNumber').textContent = orderNumber;
+    
+    // Update modal title and message based on order type
+    const modalTitle = document.querySelector('#orderModal .modal-title');
+    const modalMessage = document.querySelector('#orderModal .modal-body h5.text-center');
+    const modalSubMessage = document.querySelector('#orderModal .modal-body p.text-center');
+    const printButton = document.querySelector('#orderModal .modal-body button[onclick="printOrder()"]');
+    
+    if (isPOOrder && isPOOrder === 'true') {
+        modalTitle.textContent = 'Purchase Order Confirmation';
+        modalMessage.textContent = 'Purchase Order Created Successfully!';
+        modalSubMessage.textContent = 'Purchase Order has been created and sent to the selected branch.';
+        printButton.innerHTML = '<i class="bi bi-printer me-2"></i>Print Purchase Order';
+    } else {
+        modalTitle.textContent = 'Order Confirmation';
+        modalMessage.textContent = 'Order Placed Successfully!';
+        modalSubMessage.textContent = 'Please proceed to the counter to complete payment.';
+        printButton.innerHTML = '<i class="bi bi-printer me-2"></i>Print Sales Order';
+    }
     
     modal.show();
 }

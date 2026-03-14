@@ -41,8 +41,17 @@
             // Store the delivery method in sessionStorage
             sessionStorage.setItem('deliveryMethod', method);
             
-            // Navigate to products page
-            navigateToPage('products.html');
+            // Check if this is a PO order
+            const isPOOrder = sessionStorage.getItem('isPOOrder');
+            const selectedPOBranch = sessionStorage.getItem('selectedPOBranch');
+            
+            if (isPOOrder && isPOOrder === 'true') {
+                // For PO orders, go to products page
+                navigateToPage('products.html');
+            } else {
+                // For regular orders, go to products page
+                navigateToPage('products.html');
+            }
         }
     </script>
 </body>

@@ -55,7 +55,24 @@ function navigateToLogin() {
         showNotification('Your cart is empty!', 'warning');
         return;
     }
-    navigateToPage('login.html');
+    
+    // Check if this is a PO order
+    const isPOOrder = sessionStorage.getItem('isPOOrder');
+    const selectedPOBranch = sessionStorage.getItem('selectedPOBranch');
+    
+    if (isPOOrder && isPOOrder === 'true') {
+        // For PO orders, check if branch is already selected
+        if (selectedPOBranch) {
+            // Branch already selected, go to customer search
+            navigateToPage('search-customer.html');
+        } else {
+            // Branch not selected, go to branch selection
+            navigateToPage('select-po-branch.html');
+        }
+    } else {
+        // For regular orders, go to login
+        navigateToPage('login.html');
+    }
 }
 
 function goBackToCart() {
@@ -64,6 +81,26 @@ function goBackToCart() {
 
 function navigateToPayment() {
     navigateToPage('payment.html');
+}
+
+function navigateToCustomerInfo() {
+    // Check if this is a PO order
+    const isPOOrder = sessionStorage.getItem('isPOOrder');
+    const selectedPOBranch = sessionStorage.getItem('selectedPOBranch');
+    
+    if (isPOOrder && isPOOrder === 'true') {
+        // For PO orders, check if branch is already selected
+        if (selectedPOBranch) {
+            // Branch already selected, go to customer search
+            navigateToPage('search-customer.html');
+        } else {
+            // Branch not selected, go to branch selection
+            navigateToPage('select-po-branch.html');
+        }
+    } else {
+        // For regular orders, go to customer info page
+        navigateToPage('customer-info.html');
+    }
 }
 
 function goBackToProducts() {

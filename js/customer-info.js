@@ -5,6 +5,7 @@ function setupCustomerForm() {
     // Check if this is a PO order and display branch info
     const isPOOrder = sessionStorage.getItem('isPOOrder');
     const selectedPOBranch = sessionStorage.getItem('selectedPOBranch');
+    const selectedPOCustomer = sessionStorage.getItem('selectedPOCustomer');
     
     if (isPOOrder && isPOOrder === 'true' && selectedPOBranch) {
         // Update page title for PO order
@@ -16,6 +17,24 @@ function setupCustomerForm() {
         
         poBranchInfo.style.display = 'block';
         selectedPOBranchDisplay.textContent = selectedPOBranch;
+        
+        // If PO customer is selected, pre-fill the form
+        if (selectedPOCustomer) {
+            const customer = JSON.parse(selectedPOCustomer);
+            
+            // Pre-fill form fields
+            document.getElementById('customerName').value = customer.name || '';
+            document.getElementById('customerPhone').value = customer.phone || '';
+            document.getElementById('customerEmail').value = customer.email || '';
+            document.getElementById('customerAddress').value = customer.address || '';
+            document.getElementById('deliveryAddress').value = '';
+            
+            // Make fields readonly for PO orders
+            document.getElementById('customerName').readOnly = true;
+            document.getElementById('customerPhone').readOnly = true;
+            document.getElementById('customerEmail').readOnly = true;
+            document.getElementById('customerAddress').readOnly = true;
+        }
     }
     
     const orderType = sessionStorage.getItem('orderType') || 'Pickup';
@@ -180,6 +199,7 @@ function goToHome() {
     sessionStorage.removeItem('isGuest');
     sessionStorage.removeItem('isPOOrder');
     sessionStorage.removeItem('selectedPOBranch');
+    sessionStorage.removeItem('selectedPOCustomer');
     navigateToPage('index.html');
 }
 
