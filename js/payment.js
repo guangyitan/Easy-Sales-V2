@@ -158,7 +158,7 @@ function resetToHome() {
     }
     
     // Navigate to home page
-    navigateToPage('home.html');
+    navigateToPage('index.html');
 }
 
 // Payment page initialization

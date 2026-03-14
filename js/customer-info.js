@@ -162,7 +162,7 @@ function goToHome() {
     sessionStorage.removeItem('cart');
     sessionStorage.removeItem('customerData');
     sessionStorage.removeItem('isGuest');
-    navigateToPage('home.html');
+    navigateToPage('index.html');
 }
 
 // Customer info page initialization

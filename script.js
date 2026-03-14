@@ -861,7 +861,7 @@ function goToHome() {
     sessionStorage.removeItem('cart');
     sessionStorage.removeItem('customerData');
     sessionStorage.removeItem('isGuest');
-    navigateToPage('home.html');
+    navigateToPage('index.html');
 }
 // Cart management functions
 function updateCartDisplay() {
@@ -1080,7 +1080,7 @@ function resetToHome() {
     }
     
     // Navigate to home page
-    navigateToPage('home.html');
+    navigateToPage('index.html');
 }
 
 // Utility functions
