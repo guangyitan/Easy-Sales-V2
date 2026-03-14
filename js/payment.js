@@ -22,6 +22,24 @@ function updateOrderSummary() {
         `;
     });
     
+    // Add delivery fee if delivery method is selected
+    const deliveryMethod = sessionStorage.getItem('deliveryMethod');
+    let deliveryFee = 0;
+    
+    if (deliveryMethod === 'delivery') {
+        // Mock delivery fee calculation (can be made dynamic with postcode lookup later)
+        deliveryFee = calculateDeliveryFee();
+        
+        html += `
+            <div class="d-flex justify-content-between mb-2 text-success">
+                <span><i class="bi bi-truck me-1"></i>Delivery Fee</span>
+                <span>RM ${deliveryFee.toFixed(2)}</span>
+            </div>
+        `;
+        
+        total += deliveryFee;
+    }
+    
     orderSummaryItems.innerHTML = html;
     orderTotal.textContent = total.toFixed(2);
 }
@@ -204,6 +222,28 @@ function resetToHome() {
     
     // Navigate to home page
     navigateToPage('index.html');
+}
+
+// Mock delivery fee calculation function
+function calculateDeliveryFee() {
+    // Mock delivery fee calculation based on cart total
+    // In real implementation, this would look up postcode in delivery-fee-management data
+    const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Simple mock calculation:
+    // - Orders below RM 100: RM 10
+    // - Orders RM 100-500: RM 15  
+    // - Orders above RM 500: RM 20
+    if (cartTotal < 100) {
+        return 10.00;
+    } else if (cartTotal < 500) {
+        return 15.00;
+    } else {
+        return 20.00;
+    }
+    
+    // Alternative: Fixed fee
+    // return 15.00;
 }
 
 // Payment page initialization
