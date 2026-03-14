@@ -338,11 +338,8 @@
         }
 
         function createPurchaseOrder() {
-            // Set PO mode in sessionStorage
-            sessionStorage.setItem('isPOOrder', 'true');
-            
-            // Redirect to delivery-method.html
-            window.location.href = 'delivery-method.html';
+            // Redirect to select-po-branch.html
+            window.location.href = 'select-po-branch.html';
         }
 
         function viewPODetails(poId) {

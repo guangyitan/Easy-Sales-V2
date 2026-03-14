@@ -103,10 +103,17 @@ function goBackToCart() {
 function navigateToCustomerInfo() {
     // Check if this is a PO order
     const isPOOrder = sessionStorage.getItem('isPOOrder');
+    const selectedPOBranch = sessionStorage.getItem('selectedPOBranch');
     
     if (isPOOrder && isPOOrder === 'true') {
-        // For PO orders, redirect to branch selection page
-        navigateToPage('branch.html');
+        // For PO orders, check if branch is already selected
+        if (selectedPOBranch) {
+            // Branch already selected, go to customer info
+            navigateToPage('customer-info.html');
+        } else {
+            // Branch not selected, go to branch selection
+            navigateToPage('select-po-branch.html');
+        }
     } else {
         // For regular orders, go to customer info page
         navigateToPage('customer-info.html');
@@ -861,6 +868,8 @@ function goToHome() {
     sessionStorage.removeItem('cart');
     sessionStorage.removeItem('customerData');
     sessionStorage.removeItem('isGuest');
+    sessionStorage.removeItem('isPOOrder');
+    sessionStorage.removeItem('selectedPOBranch');
     navigateToPage('index.html');
 }
 // Cart management functions

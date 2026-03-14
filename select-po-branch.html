@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select PO Branch - Easy Sales V2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .branch-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .branch-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .branch-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .branch-header h2 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .branch-header p {
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .branch-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .form-floating {
+            margin-bottom: 20px;
+        }
+        
+        .btn-select-branch {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-select-branch:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="branch-container">
+        <div class="branch-card">
+            <div class="branch-header">
+                <i class="bi bi-geo-alt-fill branch-icon"></i>
+                <h2>Select PO Branch</h2>
+                <p>Pilih Branch untuk Order Stock</p>
+                <p>Choose which branch to send this Purchase Order to</p>
+            </div>
+            
+            <form id="poBranchForm">
+                <div class="form-floating">
+                    <select class="form-select" id="branchSelect" required>
+                        <option value="">Choose a branch...</option>
+                        <option value="Masjid Tanah">Masjid Tanah</option>
+                        <option value="Semabok">Semabok</option>
+                        <option value="Kandang">Kandang</option>
+                        <option value="Tangga Batu">Tangga Batu</option>
+                        <option value="Merlimau">Merlimau</option>
+                    </select>
+                    <label for="branchSelect">
+                        <i class="bi bi-building me-2"></i>Select Branch
+                    </label>
+                </div>
+                
+                <!-- Branch Confirmation -->
+                <div class="alert alert-info mt-3" id="branchConfirmation" style="display: none;">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <strong>Selected Branch:</strong> <span id="selectedBranchText"></span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-select-branch">
+                    <i class="bi bi-arrow-right me-2"></i>Proceed to Products
+                </button>
+            </form>
+            
+            <div class="back-link">
+                <a href="purchase-order.html">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Purchase Orders
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        // Show branch confirmation when selection changes
+        document.getElementById('branchSelect').addEventListener('change', function() {
+            const selectedBranch = this.value;
+            const branchConfirmation = document.getElementById('branchConfirmation');
+            const selectedBranchText = document.getElementById('selectedBranchText');
+            
+            if (selectedBranch) {
+                selectedBranchText.textContent = selectedBranch;
+                branchConfirmation.style.display = 'block';
+            } else {
+                branchConfirmation.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('poBranchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const selectedBranch = document.getElementById('branchSelect').value;
+            
+            if (!selectedBranch) {
+                showNotification('Please select a branch', 'warning');
+                return;
+            }
+            
+            // Store the selected branch in sessionStorage
+            sessionStorage.setItem('selectedPOBranch', selectedBranch);
+            
+            // Set PO mode flag
+            sessionStorage.setItem('isPOOrder', 'true');
+            
+            // Navigate to products page
+            navigateToPage('products.html');
+        });
+    </script>
+</body>
+</html>

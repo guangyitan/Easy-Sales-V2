@@ -2,6 +2,22 @@
 
 // Customer form setup
 function setupCustomerForm() {
+    // Check if this is a PO order and display branch info
+    const isPOOrder = sessionStorage.getItem('isPOOrder');
+    const selectedPOBranch = sessionStorage.getItem('selectedPOBranch');
+    
+    if (isPOOrder && isPOOrder === 'true' && selectedPOBranch) {
+        // Update page title for PO order
+        document.querySelector('h2').textContent = 'Purchase Order Information';
+        
+        // Show PO branch information
+        const poBranchInfo = document.getElementById('poBranchInfo');
+        const selectedPOBranchDisplay = document.getElementById('selectedPOBranchDisplay');
+        
+        poBranchInfo.style.display = 'block';
+        selectedPOBranchDisplay.textContent = selectedPOBranch;
+    }
+    
     const orderType = sessionStorage.getItem('orderType') || 'Pickup';
     document.getElementById('orderType').value = orderType.charAt(0).toUpperCase() + orderType.slice(1);
     
@@ -162,6 +178,8 @@ function goToHome() {
     sessionStorage.removeItem('cart');
     sessionStorage.removeItem('customerData');
     sessionStorage.removeItem('isGuest');
+    sessionStorage.removeItem('isPOOrder');
+    sessionStorage.removeItem('selectedPOBranch');
     navigateToPage('index.html');
 }
 
